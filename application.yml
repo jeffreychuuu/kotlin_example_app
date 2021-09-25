@@ -3,6 +3,7 @@ springdoc:
   api-docs:
     path: /api-docs
   swagger-ui:
+    enabled: true
     path: /swagger-ui-custom.html
     operationsSorter: method
 
