@@ -1,0 +1,7 @@
+postgres:
+  container_name: ekotlin_example_app
+  environment:
+    - POSTGRES_PASSWORD=password
+  image: postgres
+  ports:
+    - 5432:5432
