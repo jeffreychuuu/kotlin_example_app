@@ -1,5 +1,6 @@
 package com.example.kotlin_example_app.article
 
+import com.example.kotlin_example_app.article.dto.UpdateArticleDto
 import com.example.kotlin_example_app.article.entities.ArticleEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -12,8 +13,8 @@ class ArticleService(private val articleRepository: ArticleRepository) {
             articleRepository.findAll()
 
 
-    fun save(@Valid article: ArticleEntity): ArticleEntity =
-            articleRepository.save(article)
+    fun save(@Valid articleEntity: ArticleEntity): ArticleEntity =
+            articleRepository.save(articleEntity)
 
 
     fun findById(articleId: Long): ResponseEntity<ArticleEntity> {
@@ -23,14 +24,13 @@ class ArticleService(private val articleRepository: ArticleRepository) {
     }
 
     fun update(articleId: Long,
-                          @Valid newArticle: ArticleEntity): ResponseEntity<ArticleEntity> {
+                          @Valid updateArticleDto: UpdateArticleDto): ResponseEntity<ArticleEntity> {
         return articleRepository.findById(articleId).map { existingArticle ->
             val updatedArticle: ArticleEntity = existingArticle
-                    .copy(title = newArticle.title, content = newArticle.content)
+                    .copy(content = updateArticleDto.content)
 
             ResponseEntity.ok().body(articleRepository.save(updatedArticle))
         }.orElse(ResponseEntity.notFound().build())
-
     }
 
     fun delete(articleId: Long): ResponseEntity<Void> {

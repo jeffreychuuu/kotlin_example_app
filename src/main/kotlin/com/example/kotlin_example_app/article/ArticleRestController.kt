@@ -1,5 +1,6 @@
 package com.example.kotlin_example_app.article
 
+import com.example.kotlin_example_app.article.dto.UpdateArticleDto
 import com.example.kotlin_example_app.article.entities.ArticleEntity
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -17,8 +18,8 @@ class ArticleRestController(private val articleService: ArticleService) {
 
 
     @PostMapping("/articles")
-    fun createNewArticle(@Valid @RequestBody article: ArticleEntity): ArticleEntity =
-            articleService.save(article)
+    fun createNewArticle(@Valid @RequestBody articleEntity: ArticleEntity): ArticleEntity =
+            articleService.save(articleEntity)
 
 
     @GetMapping("/articles/{id}")
@@ -28,8 +29,8 @@ class ArticleRestController(private val articleService: ArticleService) {
 
     @PatchMapping("/articles/{id}")
     fun updateArticleById(@PathVariable(value = "id") articleId: Long,
-                          @Valid @RequestBody newArticle: ArticleEntity): ResponseEntity<ArticleEntity> =
-            articleService.update(articleId, newArticle);
+                          @Valid @RequestBody updateArticleDto: UpdateArticleDto): ResponseEntity<ArticleEntity> =
+            articleService.update(articleId, updateArticleDto);
 
     @DeleteMapping("/articles/{id}")
     fun deleteArticleById(@PathVariable(value = "id") articleId: Long): ResponseEntity<Void> =

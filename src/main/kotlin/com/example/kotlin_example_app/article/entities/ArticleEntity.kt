@@ -7,12 +7,11 @@ import javax.validation.constraints.NotBlank
 @Table(name = "article")
 data class ArticleEntity (
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long = 0,
 
         @get: NotBlank
-        val title: String = "",
+        val title: String? = null,
 
         @get: NotBlank
-        val content: String = ""
+        val content: String? = null
 )
