@@ -22,7 +22,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("javax.validation:validation-api:2.0.1.Final")
     implementation("org.postgresql:postgresql:42.2.23")
     implementation("org.springdoc:springdoc-openapi-ui:1.5.2")
