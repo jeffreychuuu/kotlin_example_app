@@ -28,6 +28,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-ui:1.5.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
     implementation("org.springframework.boot:spring-boot-starter-data-redis:2.5.5")
+    implementation("redis.clients:jedis:3.7.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
