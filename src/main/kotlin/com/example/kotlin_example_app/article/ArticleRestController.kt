@@ -1,5 +1,6 @@
 package com.example.kotlin_example_app.article
 
+import com.example.kotlin_example_app.article.dto.CreateArticleDto
 import com.example.kotlin_example_app.article.dto.UpdateArticleDto
 import com.example.kotlin_example_app.article.entities.ArticleEntity
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -18,8 +19,8 @@ class ArticleRestController(private val articleService: ArticleService) {
 
 
     @PostMapping("/articles")
-    fun createNewArticle(@Valid @RequestBody articleEntity: ArticleEntity): ArticleEntity =
-            articleService.save(articleEntity)
+    fun createNewArticle(@Valid @RequestBody createArticleDto: CreateArticleDto): ArticleEntity =
+            articleService.save(createArticleDto)
 
 
     @GetMapping("/articles/{id}")

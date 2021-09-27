@@ -26,7 +26,7 @@ dependencies {
 	implementation("javax.validation:validation-api:2.0.1.Final")
 	implementation("org.postgresql:postgresql:42.2.23")
 	implementation("org.springdoc:springdoc-openapi-ui:1.5.2")
-	implementation("org.mapstruct:mapstruct:1.4.2.Final")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
