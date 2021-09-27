@@ -27,7 +27,7 @@ class ArticleService(private val articleRepository: ArticleRepository) {
                           @Valid updateArticleDto: UpdateArticleDto): ResponseEntity<ArticleEntity> {
         return articleRepository.findById(articleId).map { existingArticle ->
             val updatedArticle: ArticleEntity = existingArticle
-                    .copy(content = updateArticleDto.content)
+                    .copy(title = updateArticleDto.title, content = updateArticleDto.content)
 
             ResponseEntity.ok().body(articleRepository.save(updatedArticle))
         }.orElse(ResponseEntity.notFound().build())
