@@ -7,6 +7,16 @@ springdoc:
     path: /swagger-ui-custom.html
     operationsSorter: method
 
+##Graphql
+graphql:
+  servlet:
+    mapping: /graphql
+
+##Grpahiql
+graphiql:
+  mapping: /graphiql
+  endpoint: /graphql
+
 ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
 spring:
   datasource:
