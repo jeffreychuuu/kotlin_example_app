@@ -15,9 +15,9 @@ This is a simple guideline on the project creation and scaffolding project based
 
 ## Content
 
-- [Get Started](#Get -Started)
+- [Get Started](#Get-Started)
 - [Adding Rest Controller](#Adding-Rest-Controller)
-- [Adding SpringDoc OpenAPI3 Support](#Adding -SpringDoc-OpenAPI3-Support)
+- [Adding SpringDoc OpenAPI3 Support](#Adding-SpringDoc-OpenAPI3-Support)
 - [Adding Graphql Support](#Adding-Graphql-Support)
 
 ## Get Started
