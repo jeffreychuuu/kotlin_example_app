@@ -1,9 +1,10 @@
 package com.example.kotlin_example_app.article.entities
 
+import kotlinx.serialization.Serializable
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
-import java.io.Serializable
 
+@Serializable
 @Entity
 @Table(name = "article")
 data class ArticleEntity(
