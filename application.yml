@@ -7,7 +7,6 @@ springdoc:
     path: /swagger-ui-custom.html
     operationsSorter: method
 
-
 ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
 spring:
   datasource:
@@ -27,3 +26,17 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQL81Dialect
+  ## Redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: password
+    ttl: 3600
+    tls: false
+    database: 0
+    pool:
+      max-active: 8 # 連接池最大連接數（使用負值表示沒有限制）
+      max-wait: -1 # 連接池最大阻塞等待時間（使用負值表示沒有限制）
+      max-idle: 8 # 連接池中的最大空閒連接
+      min-idle: 0 # 連接池中的最小空閒連接
+      timeout: 0 # 連接超時時間（毫秒）

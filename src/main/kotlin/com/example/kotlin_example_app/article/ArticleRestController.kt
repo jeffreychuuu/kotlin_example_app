@@ -25,7 +25,7 @@ class ArticleRestController(private val articleService: ArticleService) {
 
     @GetMapping("/articles/{id}")
     fun getArticleById(@PathVariable(value = "id") articleId: Long): ResponseEntity<ArticleEntity> =
-        articleService.findById(articleId);
+            articleService.findById(articleId);
 
 
     @PatchMapping("/articles/{id}")
