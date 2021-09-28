@@ -21,6 +21,7 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding Graphql Support](#Adding-Graphql-Support)
 - [Adding Spring Data Support](#Adding-Spring-Data-Support)
 - [Adding Redis Support](#Adding-Redis-Support)
+- [Adding gRPC Support](#Adding-gRPC-Support)
 
 ## Get Started
 
@@ -903,4 +904,111 @@ class ArticleService(private val articleRepository: ArticleRepository) {
 ```
 
 
+
+## Adding gRPC Support
+
+Create a new project for grc_lib
+
+Define the `build.gradle.kts`
+
+```yml
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.google.protobuf.gradle.*;
+buildscript {
+	dependencies {
+		classpath("com.google.protobuf:protobuf-gradle-plugin:0.8.13")
+	}
+}
+plugins {
+	id("com.google.protobuf") version "0.8.13"
+	kotlin("jvm") version "1.4.10"
+}
+
+group = "com.kotlingrpc"
+version = "0.0.1-SNAPSHOT"
+java.sourceCompatibility = JavaVersion.VERSION_11
+
+allprojects {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		google()
+	}
+}
+
+
+dependencies {
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("io.grpc:grpc-protobuf:1.33.1")
+	implementation("io.grpc:grpc-stub:1.33.1")
+	implementation("io.grpc:grpc-netty:1.33.1")
+	compileOnly("javax.annotation:javax.annotation-api:1.3.2")
+	api("com.google.protobuf:protobuf-java-util:3.13.0")
+	implementation("io.grpc:grpc-all:1.33.1")
+	api("io.grpc:grpc-kotlin-stub:0.2.1")
+	implementation("io.grpc:protoc-gen-grpc-kotlin:0.1.5")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+	implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.13")
+	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+}
+
+tasks.withType<KotlinCompile> {
+	kotlinOptions {
+		freeCompilerArgs = listOf("-Xjsr305=strict")
+		jvmTarget = "11"
+	}
+}
+
+protobuf {
+	protoc{
+		artifact = "com.google.protobuf:protoc:3.10.1"
+	}
+	generatedFilesBaseDir = "$projectDir/src/main/grpc/com.kotlingrpc/generated"
+	plugins {
+		id("grpc"){
+			artifact = "io.grpc:protoc-gen-grpc-java:1.33.1"
+		}
+		id("grpckt") {
+			artifact = "io.grpc:protoc-gen-grpc-kotlin:0.1.5"
+		}
+	}
+	generateProtoTasks {
+		all().forEach {
+			it.plugins {
+				id("grpc")
+				id("grpckt")
+			}
+		}
+	}
+}
+```
+
+Create a proto
+
+```proto
+syntax = "proto3";
+package com.kotlingrpc.demoGrpc;
+
+option java_multiple_files = true;
+option java_package = "com.kotlingrpc.demoGrpc";
+option java_outer_classname = "HelloWorldProto";
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
+```
+
+Run gradlew build, then the generated files would be built on the `generatedFilesBaseDir` you define on `build.gradle.kts`
 

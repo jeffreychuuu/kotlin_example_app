@@ -32,7 +32,9 @@ dependencies {
     implementation("com.graphql-java:graphiql-spring-boot-starter:5.0.2")
     implementation("com.graphql-java:graphql-java-tools:5.2.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+    implementation("net.devh:grpc-server-spring-boot-starter:2.12.0.RELEASE")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation(project(":grpc_lib", "default"))
 }
 
 tasks.withType<KotlinCompile> {
