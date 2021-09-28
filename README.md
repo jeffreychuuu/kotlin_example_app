@@ -911,7 +911,7 @@ Create a new project for grc_lib
 
 Define the `build.gradle.kts`
 
-```yml
+```
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.google.protobuf.gradle.*;
 buildscript {
@@ -961,15 +961,15 @@ tasks.withType<KotlinCompile> {
 
 protobuf {
 	protoc{
-		artifact = "com.google.protobuf:protoc:3.10.1"
+		artifact = "com.google.protobuf:protoc:3.10.1" // you need to mention :osx-x86_64 behind if you are using m1 mac
 	}
 	generatedFilesBaseDir = "$projectDir/src/main/grpc/com.kotlingrpc/generated"
 	plugins {
 		id("grpc"){
-			artifact = "io.grpc:protoc-gen-grpc-java:1.33.1"
+			artifact = "io.grpc:protoc-gen-grpc-java:1.33.1" // you need to mention :osx-x86_64 behind if you are using m1 mac
 		}
 		id("grpckt") {
-			artifact = "io.grpc:protoc-gen-grpc-kotlin:0.1.5"
+			artifact = "io.grpc:protoc-gen-grpc-kotlin:0.1.5" // you need to mention :osx-x86_64 behind if you are using m1 mac
 		}
 	}
 	generateProtoTasks {
