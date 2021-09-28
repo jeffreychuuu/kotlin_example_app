@@ -7,6 +7,10 @@ springdoc:
     path: /swagger-ui-custom.html
     operationsSorter: method
 
+grpc:
+  server:
+    port: 9872
+
 ##Graphql
 graphql:
   servlet:

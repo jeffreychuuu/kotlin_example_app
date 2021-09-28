@@ -1,1 +1,1 @@
-rootProject.name = "kotlin_example_app"
+rootProject.name = "grpc_lib"

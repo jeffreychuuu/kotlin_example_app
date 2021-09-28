@@ -1,8 +1,8 @@
 syntax = "proto3";
-package com.kotlingrpc.demoGrpc;
+
+package demo;
 
 option java_multiple_files = true;
-option java_package = "com.kotlingrpc.demoGrpc";
 option java_outer_classname = "HelloWorldProto";
 
 // The greeting service definition.
