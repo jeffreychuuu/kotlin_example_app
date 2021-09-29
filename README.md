@@ -21,7 +21,7 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding Graphql Support](#Adding-Graphql-Support)
 - [Adding Spring Data Support](#Adding-Spring-Data-Support)
 - [Adding Redis Support](#Adding-Redis-Support)
-- [Adding gRPC Support](#Adding-gRPC-Support))
+- [Adding gRPC Support](#Adding-gRPC-Support)
 
 ## Get Started
 
