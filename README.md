@@ -21,7 +21,7 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding Graphql Support](#Adding-Graphql-Support)
 - [Adding Spring Data Support](#Adding-Spring-Data-Support)
 - [Adding Redis Support](#Adding-Redis-Support)
-- [Adding gRPC Support (Still not working)](#Adding-gRPC-Support-(Still-not-working))
+- [Adding gRPC Support](#Adding-gRPC-Support))
 
 ## Get Started
 
@@ -905,7 +905,7 @@ class ArticleService(private val articleRepository: ArticleRepository) {
 
 
 
-## Adding gRPC Support (Still not working)
+## Adding gRPC Support
 
 - Keep looking at the update of [grpc/grpc-kotlin (github.com)](https://github.com/grpc/grpc-kotlin)
 
