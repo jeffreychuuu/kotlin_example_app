@@ -9,7 +9,7 @@ plugins {
 //	id("org.springframework.boot") version "2.4.0"
 //	id("io.spring.dependency-management") version "1.0.10.RELEASE"
 	id("com.google.protobuf") version "0.8.13"
-	kotlin("jvm") version "1.4.32"
+	kotlin("jvm") version "1.4.32" // remove the version tag if you are build by other project
 //	kotlin("plugin.spring") version "1.4.10"
 //	id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
 }
@@ -62,15 +62,15 @@ tasks.withType<KotlinCompile> {
 
 protobuf {
 	protoc{
-		artifact = "com.google.protobuf:protoc:3.14.0:osx-x86_64"
+		artifact = "com.google.protobuf:protoc:3.14.0" // you need to mention :osx-x86_64 behind if you are using m1 mac
 	}
 	generatedFilesBaseDir = "$projectDir/src/main/kotlin/com.kotlingrpc.demoGrpc/generated"
 	plugins {
 		id("grpc"){
-			artifact = "io.grpc:protoc-gen-grpc-java:1.36.0:osx-x86_64"
+			artifact = "io.grpc:protoc-gen-grpc-java:1.36.0" // you need to mention :osx-x86_64 behind if you are using m1 mac
 		}
 		id("grpckt") {
-			artifact = "io.grpc:protoc-gen-grpc-kotlin:1.1.0:jdk7@jar"
+			artifact = "io.grpc:protoc-gen-grpc-kotlin:1.1.0:jdk7@jar" // you need to mention :osx-x86_64 behind if you are using m1 mac
 		}
 	}
 	generateProtoTasks {

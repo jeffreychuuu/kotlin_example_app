@@ -21,7 +21,7 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding Graphql Support](#Adding-Graphql-Support)
 - [Adding Spring Data Support](#Adding-Spring-Data-Support)
 - [Adding Redis Support](#Adding-Redis-Support)
-- [Adding gRPC Support](#Adding-gRPC-Support)
+- [Adding gRPC Support (Still not working)](#Adding-gRPC-Support-(Still-not-working))
 
 ## Get Started
 
@@ -905,11 +905,22 @@ class ArticleService(private val articleRepository: ArticleRepository) {
 
 
 
-## Adding gRPC Support
+## Adding gRPC Support (Still not working)
+
+- Keep looking at the update of [grpc/grpc-kotlin (github.com)](https://github.com/grpc/grpc-kotlin)
+
+  - [protoc-gen-grpc-kotlin](https://github.com/grpc/grpc-kotlin/blob/master/compiler): A [protoc](https://github.com/protocolbuffers/protobuf#protocol-compiler-installation) plugin for generating Kotlin gRPC client-stub and server plumbing code.
+
+    > **Note:** The Kotlin protoc plugin uses the [Java protoc plugin](https://github.com/grpc/grpc-java/tree/master/compiler) behind the scenes to **generate \*message types\* as \*Java classes\***. Generation of Kotlin sources for proto messages is being discussed in [protocolbuffers/protobuf#3742](https://github.com/protocolbuffers/protobuf/issues/3742).
+
+  - [grpc-kotlin-stub](https://github.com/grpc/grpc-kotlin/blob/master/stub): A Kotlin implementation of gRPC, providing runtime support for client-stubs and server-side code.
 
 Create a new project for grc_lib
 
 Define the `build.gradle.kts`
+
+- `kotlin("jvm") version "1.4.10" // remove the version tag if you are build by other project`
+- `you need to mention :osx-x86_64 behind if you are using m1 mac on protobug plugin`
 
 ```
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -921,7 +932,7 @@ buildscript {
 }
 plugins {
 	id("com.google.protobuf") version "0.8.13"
-	kotlin("jvm") version "1.4.10"
+	kotlin("jvm") version "1.4.10" // remove the version tag if you are build by other project
 }
 
 group = "com.kotlingrpc"
@@ -1011,4 +1022,49 @@ message HelloReply {
 ```
 
 Run gradlew build, then the generated files would be built on the `generatedFilesBaseDir` you define on `build.gradle.kts`
+
+Move back to project for rdbms_service
+
+Add the related library
+
+```
+implementation("net.devh:grpc-server-spring-boot-starter:2.12.0.RELEASE")
+```
+
+Add grpc config to `application.yml`
+
+```yaml
+grpc:
+  server:
+    port: 9090
+```
+
+Edit the `setting.gradle.tks` by add the `grpc_lib` project
+
+```kotlin
+include(":grpc_lib")
+project(":grpc_lib").projectDir = file("../grpc_lib")
+```
+
+Edit the `build.gradle.tks` by add the `grpc_lib` project
+
+```kotlin
+dependencies {
+    implementation(project(":grpc_lib"))
+}
+```
+
+Then create the `GrpcController` using java class
+
+```java
+@GrpcService
+public class GrpcServerService extends GreeterGrpc.GreeterImplBase {
+    @Override
+    public void sayHello(HelloRequest req, StreamObserver<HelloReply> responseObserver) {
+        HelloReply reply = HelloReply.newBuilder().setMessage("Hello ==> " + req.getName()).build();
+        responseObserver.onNext(reply);
+        responseObserver.onCompleted();
+    }
+}
+```
 

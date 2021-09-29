@@ -9,7 +9,7 @@ springdoc:
 
 grpc:
   server:
-    port: 9872
+    port: 9090
 
 ##Graphql
 graphql:
