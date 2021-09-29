@@ -1,0 +1,14 @@
+postgres:
+  container_name: kotlin_example_app_mongo
+  environment:
+    MONGO_INITDB_ROOT_USERNAME: root
+    MONGO_INITDB_ROOT_PASSWORD: example
+  image: mongo
+  ports:
+    - 27017:27017
+redis:
+  container_name: kotlin_example_app_redis
+  image: redis
+  command: redis-server --requirepass password
+  ports:
+    - 6379:6379

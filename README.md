@@ -22,6 +22,7 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding Spring Data Support](#Adding-Spring-Data-Support)
 - [Adding Redis Support](#Adding-Redis-Support)
 - [Adding gRPC Support](#Adding-gRPC-Support)
+- [Adding MongoDB Support](#Adding-MongoDB-Support)
 
 ## Get Started
 
@@ -1066,5 +1067,53 @@ public class GrpcServerService extends GreeterGrpc.GreeterImplBase {
         responseObserver.onCompleted();
     }
 }
+```
+
+## Adding MongoDB Support
+
+Add the package to `build.gradle.kts` 
+
+```yaml
+implementation("org.springframework.boot:spring-boot-starter-data-mongodb:2.5.5")
+```
+
+Add the Spring Doc config to `application.yml`
+
+```yaml
+spring:
+  data:
+    ## Mongodb
+    mongodb:
+      authentication-database: admin
+      username: root
+      password: example
+      database: test_db
+      host: localhost
+      port: 27017
+```
+
+Create a Mongo Document
+
+```kotlin
+@Document(collection = "customers")
+data class UserDocument(
+    @Id
+    val id: String = "",
+
+    @Field("name")
+    val name: String = "",
+
+    @Field("age")
+    val age: Int? = null,
+
+    @Field("gender")
+    val gender: String? = null
+)
+```
+
+Create the Mongo Repository
+
+```kotlin
+interface UserRepository : MongoRepository<UserDocument, String> {}
 ```
 
