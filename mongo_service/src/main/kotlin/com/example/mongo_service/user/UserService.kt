@@ -2,6 +2,7 @@ package com.example.mongo_service.user
 
 import com.example.kotlin_example_app.article.dto.CreateUserDto
 import com.example.kotlin_example_app.article.dto.UpdateUserDto
+import com.example.mongo_service.util.RedisUtil
 import com.example.mongo_service.documents.UserRepository
 import com.example.mongo_service.user.documents.UserDocument
 import com.fasterxml.jackson.module.kotlin.convertValue
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import javax.annotation.Resource
 import javax.validation.Valid
 
 @Service
@@ -20,8 +22,8 @@ class UserService(private val userRepository: UserRepository) {
     @Value("\${spring.redis.ttl}")
     val ttl: Long = 0
 
-//    @Resource
-//    private lateinit var redisUtil: RedisUtil
+    @Resource
+    private lateinit var redisUtil: RedisUtil
 
     fun findAll(): List<UserDocument> =
         userRepository.findAll()
@@ -29,22 +31,29 @@ class UserService(private val userRepository: UserRepository) {
     fun save(@Valid createUserDto: CreateUserDto): UserDocument {
         val userDocument: UserDocument = mapper.convertValue<UserDocument>(createUserDto)
         val result = userRepository.save(userDocument)
-//        Thread {
-//            redisUtil.hset(key, userDocument.id, mapper.writeValueAsString(result), ttl)
-//        }.start()
+        Thread {
+            redisUtil.hset(key, userDocument.id, mapper.writeValueAsString(result), ttl)
+        }.start()
         return result
     }
 
     fun findById(userId: String): ResponseEntity<UserDocument> {
-        return userRepository.findById(userId).map { result ->
-            ResponseEntity.ok(result)
-        }.orElse(ResponseEntity.notFound().build())
+        var redisResult = redisUtil.hget(key, userId)
+        if (redisResult != null) {
+            val result = mapper.readValue(redisResult.toString(), UserDocument::class.java)
+            return ResponseEntity.ok(result)
+        } else
+            return userRepository.findById(userId).map { result ->
+                redisUtil.hset(key, userId, mapper.writeValueAsString(result), ttl)
+                ResponseEntity.ok(result)
+            }.orElse(ResponseEntity.notFound().build())
     }
 
     fun update(
         userId: String,
         @Valid updateUserDto: UpdateUserDto
     ): ResponseEntity<UserDocument> {
+        redisUtil.hdel(key, userId)
         return userRepository.findById(userId).map { existingArticle ->
             val updatedUser: UserDocument = existingArticle
                 .copy(
@@ -58,6 +67,7 @@ class UserService(private val userRepository: UserRepository) {
     }
 
     fun delete(userId: String): ResponseEntity<Void> {
+        redisUtil.hdel(key, userId)
         return userRepository.findById(userId).map { article ->
             userRepository.delete(article)
             ResponseEntity<Void>(HttpStatus.OK)

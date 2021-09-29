@@ -293,6 +293,36 @@ spring:
       timeout: 0 # 連接超時時間（毫秒）
 ```
 
+Add bean for Redis custom config
+
+```kotlin
+@Configuration
+class AppConfig {
+    @Value("\${spring.redis.host}")
+    val redisHost: String = ""
+
+    @Value("\${spring.redis.port}")
+    val redisPort: Int = 0
+
+    @Value("\${spring.redis.password}")
+    val redisPassword: String = ""
+
+    @Bean
+    fun jedisConnectionFactory(): JedisConnectionFactory {
+        val config: RedisStandaloneConfiguration = RedisStandaloneConfiguration(redisHost, redisPort)
+        config.password = RedisPassword.of(redisPassword)
+        return JedisConnectionFactory(config)
+    }
+
+    @Bean
+    fun redisTemplate(): RedisTemplate<String, Any>? {
+        val template = RedisTemplate<String, Any>()
+        template.setConnectionFactory(jedisConnectionFactory())
+        return template
+    }
+}
+```
+
 Define a `RedisUtil`
 
 ```kotlin

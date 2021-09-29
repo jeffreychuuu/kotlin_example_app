@@ -1,4 +1,4 @@
-package com.example.kotlin_example_app
+package com.example.mongo_service
 
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
@@ -11,14 +11,13 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
 import org.springframework.data.redis.core.RedisTemplate
 
-
 @Configuration
 class AppConfig {
     @Bean
     fun customOpenAPI(): OpenAPI =
         OpenAPI()
             .components(Components())
-            .info(Info().title("RDBMS Service"))
+            .info(Info().title("Mongo Service"))
 
 
     @Value("\${spring.redis.host}")

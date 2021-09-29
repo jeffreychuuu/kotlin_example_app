@@ -22,6 +22,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springdoc:springdoc-openapi-ui:1.5.2")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:2.5.5")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis:2.5.5")
+    implementation("redis.clients:jedis:3.7.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

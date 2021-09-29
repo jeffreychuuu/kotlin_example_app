@@ -34,8 +34,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("net.devh:grpc-server-spring-boot-starter:2.12.0.RELEASE")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    implementation(project(":grpc_lib"))
-    implementation("io.grpc:grpc-protobuf:1.41.0")
+//    implementation(project(":grpc_lib"))
 }
 
 tasks.withType<KotlinCompile> {
