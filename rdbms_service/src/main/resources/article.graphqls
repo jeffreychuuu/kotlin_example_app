@@ -2,16 +2,19 @@ type Article {
     id: ID!
     title: String!
     content: String!
+    authorId: String!
 }
 
 input CreateArticle {
     title: String!
     content: String!
+    authorId: String!
 }
 
 input UpdateArticle {
     title: String
     content: String
+    authorId: String
 }
 
 type Query {

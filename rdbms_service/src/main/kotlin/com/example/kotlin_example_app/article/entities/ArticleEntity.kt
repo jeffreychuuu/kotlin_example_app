@@ -16,5 +16,8 @@ data class ArticleEntity(
     val title: String? = null,
 
     @get: NotBlank
-    val content: String? = null
+    val content: String? = null,
+
+    @get: NotBlank
+    val authorId: String? = null,
 )

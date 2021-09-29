@@ -23,6 +23,7 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding Redis Support](#Adding-Redis-Support)
 - [Adding gRPC Support](#Adding-gRPC-Support)
 - [Adding MongoDB Support](#Adding-MongoDB-Support)
+- [Adding Retrofit Support](#Adding-Retrofit-Support)
 
 ## Get Started
 
@@ -1107,7 +1108,7 @@ Add the package to `build.gradle.kts`
 implementation("org.springframework.boot:spring-boot-starter-data-mongodb:2.5.5")
 ```
 
-Add the Spring Doc config to `application.yml`
+Add the mongodb config to `application.yml`
 
 ```yaml
 spring:
@@ -1145,5 +1146,80 @@ Create the Mongo Repository
 
 ```kotlin
 interface UserRepository : MongoRepository<UserDocument, String> {}
+```
+
+## Adding Retrofit Support
+
+Add the package to `build.gradle.kts` 
+
+```yaml
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+```
+
+Define the external services config to `application.yml`
+
+```yaml
+external-services:
+  mongo-service:
+    endpoint: http://localhost:8081
+```
+
+Create the Retrofit config
+
+```kotlin
+@Configuration
+class RetrofitConfig {
+    @Autowired
+    var environment: Environment? = null
+
+    @Bean("mongoServiceRetrofit")
+    fun createMongoServiceRetrofit(): Retrofit? {
+        return Retrofit.Builder()
+            .baseUrl(environment!!.getProperty("external-services.mongo-service.endpoint")!!)
+            .addConverterFactory(JacksonConverterFactory.create())
+            .client(okhttpclient()!!)
+            .build()
+    }
+
+    fun okhttpclient(): OkHttpClient? {
+        val logInterceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger.DEFAULT)
+        logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        return OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .addNetworkInterceptor(logInterceptor)
+            .build()
+    }
+}
+```
+
+Create the REST api interface
+
+```kotlin
+interface MongoServiceRestApi {
+    @GET("/api/users/{id}")
+    fun findUserById(
+        @Path("id") id: String
+    ): Call<Any>
+}
+```
+
+Autowire the retrofit on the place to use and call the api in the function
+
+```kotlin
+@Service
+class MongoService {
+    @Autowired
+    @Qualifier("mongoServiceRetrofit")
+    lateinit var mongoServiceRetrofit: Retrofit
+
+    fun findById(id: String): Any? {
+        val mongoServiceRestApi: MongoServiceRestApi = mongoServiceRetrofit.create(MongoServiceRestApi::class.java)
+        val response = mongoServiceRestApi.findUserById(id).execute()
+        return response.body()
+    }
+}
 ```
 

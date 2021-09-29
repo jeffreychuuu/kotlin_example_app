@@ -3,18 +3,23 @@ package com.example.kotlin_example_app.article
 import com.example.kotlin_example_app.article.dto.CreateArticleDto
 import com.example.kotlin_example_app.article.dto.UpdateArticleDto
 import com.example.kotlin_example_app.article.entities.ArticleEntity
+import com.example.kotlin_example_app.externalService.MongoService
+import com.example.kotlin_example_app.retrofit.MongoServiceRestApi
 import com.example.kotlin_example_app.util.RedisUtil
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import retrofit2.Retrofit
 import javax.annotation.Resource
 import javax.validation.Valid
 
 @Service
-class ArticleService(private val articleRepository: ArticleRepository) {
+class ArticleService(private val articleRepository: ArticleRepository, private val mongoService: MongoService) {
     val key = "article"
     val mapper = jacksonObjectMapper()
 
@@ -24,11 +29,15 @@ class ArticleService(private val articleRepository: ArticleRepository) {
     @Resource
     private lateinit var redisUtil: RedisUtil
 
+    @Autowired
+    @Qualifier("mongoServiceRetrofit")
+    lateinit var mongoServiceRetrofit: Retrofit
+
     fun findAll(): List<ArticleEntity> =
         articleRepository.findAll()
 
-
-    fun save(@Valid createArticleDto: CreateArticleDto): ArticleEntity {
+    fun save(@Valid createArticleDto: CreateArticleDto): ArticleEntity? {
+        val author = mongoService.findById(createArticleDto.authorId) ?: return null
         val articleEntity: ArticleEntity = mapper.convertValue<ArticleEntity>(createArticleDto)
         val result = articleRepository.save(articleEntity)
         Thread {
@@ -38,22 +47,24 @@ class ArticleService(private val articleRepository: ArticleRepository) {
     }
 
 
-    fun findById(articleId: Long): ResponseEntity<ArticleEntity> {
+    fun findById(articleId: Long): ArticleEntity? {
         var redisResult = redisUtil.hget(key, articleId.toString())
-        if (redisResult != null) {
+        return if (redisResult != null) {
             val result = mapper.readValue(redisResult.toString(), ArticleEntity::class.java)
-            return ResponseEntity.ok(result)
+            result
         } else
-            return articleRepository.findById(articleId).map { result ->
+            articleRepository.findById(articleId).map { result ->
                 redisUtil.hset(key, articleId.toString(), mapper.writeValueAsString(result), ttl)
-                ResponseEntity.ok(result)
-            }.orElse(ResponseEntity.notFound().build())
+                result
+            }.orElse(null)
     }
 
     fun update(
         articleId: Long,
         @Valid updateArticleDto: UpdateArticleDto
-    ): ResponseEntity<ArticleEntity> {
+    ): ArticleEntity? {
+        if (updateArticleDto.authorId != null)
+            updateArticleDto.authorId?.let { mongoService.findById(it) } ?: return null
         redisUtil.hdel(key, articleId.toString())
         return articleRepository.findById(articleId).map { existingArticle ->
             val updatedArticle: ArticleEntity = existingArticle
@@ -62,15 +73,15 @@ class ArticleService(private val articleRepository: ArticleRepository) {
                     content = if (updateArticleDto?.content != null) updateArticleDto.content else existingArticle.content
                 )
 
-            ResponseEntity.ok().body(articleRepository.save(updatedArticle))
-        }.orElse(ResponseEntity.notFound().build())
+            articleRepository.save(updatedArticle)
+        }.orElse(null)
     }
 
-    fun delete(articleId: Long): ResponseEntity<Void> {
+    fun delete(articleId: Long): Boolean {
         redisUtil.hdel(key, articleId.toString())
         return articleRepository.findById(articleId).map { article ->
             articleRepository.delete(article)
-            ResponseEntity<Void>(HttpStatus.OK)
-        }.orElse(ResponseEntity.notFound().build())
+            true
+        }.orElse(false)
     }
 }

@@ -10,6 +10,10 @@ springdoc:
     path: /swagger-ui-custom.html
     operationsSorter: method
 
+external-services:
+  mongo-service:
+    endpoint: http://localhost:8081
+
 grpc:
   server:
     port: 9090

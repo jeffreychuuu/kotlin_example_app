@@ -33,6 +33,10 @@ dependencies {
     implementation("com.graphql-java:graphql-java-tools:5.2.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("net.devh:grpc-server-spring-boot-starter:2.12.0.RELEASE")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 //    implementation(project(":grpc_lib"))
 }
