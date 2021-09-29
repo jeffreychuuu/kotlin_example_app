@@ -1,7 +1,7 @@
 package com.example.mongo_service.user
 
-import com.example.kotlin_example_app.article.dto.CreateUserDto
-import com.example.kotlin_example_app.article.dto.UpdateUserDto
+import com.example.mongo_service.user.dto.CreateUserDto
+import com.example.mongo_service.user.dto.UpdateUserDto
 import com.example.mongo_service.user.documents.UserDocument
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity

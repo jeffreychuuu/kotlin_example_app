@@ -2,7 +2,6 @@ package com.example.kotlin_example_app.article
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver
 import com.example.kotlin_example_app.article.entities.ArticleEntity
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 
 @Component

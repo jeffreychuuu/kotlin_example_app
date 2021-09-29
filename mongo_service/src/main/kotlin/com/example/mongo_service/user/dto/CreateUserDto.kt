@@ -1,4 +1,4 @@
-package com.example.kotlin_example_app.article.dto
+package com.example.mongo_service.user.dto
 
 class CreateUserDto {
     val name: String = ""
