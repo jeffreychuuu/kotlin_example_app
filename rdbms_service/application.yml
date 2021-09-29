@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 ## Spring Doc
 springdoc:
   api-docs:
