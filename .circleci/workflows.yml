@@ -34,9 +34,9 @@ jobs:
       app_name:
         type: string
 
-    docker:
-      - image: cimg/openjdk:11.0
-    resource_class: medium
+    machine:
+      resource_class: medium
+      image: ubuntu-2004:202010-01
 
     working_directory: ~/<< parameters.app_name >>
 
@@ -49,7 +49,7 @@ jobs:
       - run:
           name: Make gradlew executable
           command: |
-            chmod +x gradlew
+            cd << parameters.app_name >> && chmod +x gradlew
       - run: 
           name: Gradlew Clean Build
           command: |
