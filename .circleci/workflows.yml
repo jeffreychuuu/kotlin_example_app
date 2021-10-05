@@ -43,9 +43,13 @@ jobs:
     steps:
       - checkout
       - run:
+          name: LS
+          command: |
+            ls
+      - run:
           name: Make gradlew executable
           command: |
-            chmod +x ~/<< parameters.app_name >>/gradlew
+            chmod +x gradlew
       - run: 
           name: Gradlew Clean Build
           command: |
