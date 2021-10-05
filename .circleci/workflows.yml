@@ -51,6 +51,7 @@ jobs:
           command: |
             cd << parameters.app_name >> && ./gradlew clean build -x test
       - docker/build:
+          attach-at: << parameters.app_name >>
           dockerfile: << parameters.app_name >>/Dockerfile
           image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
       - docker/push:
