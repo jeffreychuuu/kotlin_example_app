@@ -69,8 +69,9 @@ jobs:
             echo Deploy << parameters.app_name >>:<< pipeline.parameters.version_tag >> to EKS
 
   all_filtered_job:
+    docker:
+      - image: cimg/base:2021.04
     steps:
-      - checkout
       - run:
           name: echo done message
           command: |
