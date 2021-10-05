@@ -38,11 +38,11 @@ jobs:
       resource_class: medium
       image: ubuntu-2004:202010-01
 
-    working_directory: ~/kotlin-example-app/<< parameters.app_name >>
+    working_directory: ~/app/<< parameters.app_name >>
 
     steps:
       - checkout:
-          path: ~/kotlin-example-app
+          path: ~/app
       - run:
           name: ls
           command: |
