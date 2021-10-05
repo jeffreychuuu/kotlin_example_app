@@ -120,13 +120,6 @@ workflows:
       - build:
           name: Build rdbms_service
           app_name: rdbms_service
-      # - docker/publish:
-      #     requires:
-      #       - Build rdbms_service
-      #     name: Publish rdbms_service docker image
-      #     dockerfile: rdbms_service/Dockerfile
-      #     image: ${DOCKER_LOGIN}/rdbms_service
-      #     tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
       - deploy:
           name: Deploy rdbms_service
           requires:
