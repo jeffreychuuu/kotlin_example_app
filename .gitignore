@@ -1,3 +1,4 @@
 /.idea
 .DS_STORE
 /grpc_lib/lib
+/.history/
