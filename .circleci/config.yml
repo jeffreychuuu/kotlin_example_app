@@ -6,7 +6,7 @@ workflows:
   setup:
     jobs:
       - path-filtering/filter:
-          base-revision: master
+          base-revision: main
           mapping: |
             grpc_lib/.* grpc-lib-modified true
             mongo_service/.* mongo-service-modified true
