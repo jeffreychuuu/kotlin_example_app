@@ -7,7 +7,7 @@ import org.springframework.boot.runApplication
 @SpringBootApplication
 class MongoServiceApplication
 
-
+//test circle ci
 fun main(args: Array<String>) {
     SpringApplication.run(MongoServiceApplication::class.java, *args)
 }
