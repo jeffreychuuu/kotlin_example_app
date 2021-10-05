@@ -127,9 +127,8 @@ workflows:
           requires:
             - Build rdbms_service
           name: Publish rdbms_service docker image
+          registry: << pipeline.parameters.docker_registry_name >>
           image: << pipeline.parameters.docker_registry_name >>/rdbms_service
-          docker-username: $DOCKER_USERNAME
-          docker-password: $DOCKER_PASSWORD
           tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
       - deploy:
           name: Deploy rdbms_service
