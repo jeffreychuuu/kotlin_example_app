@@ -15,39 +15,6 @@ parameters:
     type: boolean
     default: false
 
-commands:
-  build-commands:
-    parameters:
-    app_name:
-      type: string
-
-    steps:
-      - checkout
-      - run:
-          name: Build docker image
-          command: |
-            echo build << parameters.app_name >>
-      - run:
-          name: Publish to docker registry
-          command: |
-            echo publish << parameters.app_name >>:${CIRCLE_SHA1} to docker registry
-
-  deploy-commands:
-    parameters:
-    app_name:
-      type: string
-
-    steps:
-      - checkout
-      - run:
-          name: Pull docker image
-          command: |
-            echo pull << parameters.app_name >>
-      - run:
-          name: Deploy docker image to k8s
-          command: |
-            echo deploy << parameters.app_name >>:${CIRCLE_SHA1} to k8s
-
 jobs:
   build:
     parameters:
@@ -61,7 +28,11 @@ jobs:
     working_directory: ~/<< parameters.app_name >>
 
     steps:
-      - build-commands
+      - checkout
+      - run:
+          name: echo build message
+          command: |
+            echo build << parameters.app_name >>
 
   deploy:
     parameters:
@@ -75,7 +46,11 @@ jobs:
     working_directory: ~/<< parameters.app_name >>
 
     steps:
-      - deploy-commands
+      - checkout
+      - run:
+          name: echo build message
+          command: |
+            echo deploy << parameters.app_name >>
 
   done:
     machine:
