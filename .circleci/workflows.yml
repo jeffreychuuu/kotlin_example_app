@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
-  docker: circleci/docker@1.7.0 
+  docker: circleci/docker@1.5.0
 
 parameters:
   grpc-lib-modified:
@@ -17,9 +17,6 @@ parameters:
   version_tag:
     type: string
     default: latest
-  docker_registry_name:
-    type: string
-    default: jeffreychuuu
 
 commands:
   aws-login:
@@ -34,28 +31,23 @@ jobs:
       app_name:
         type: string
 
-    docker:
-      - image: cimg/openjdk:11.0
-    resource_class: medium
+    machine:
+      resource_class: medium
+      image: ubuntu-2004:202010-01
 
     working_directory: ~/<< parameters.app_name >>
 
     steps:
       - checkout
       - run:
-          name: Gradlew Clean Build
+          name: Build Docker Image
           command: |
-            ./gradlew clean build
-      - docker/publish:
-          name: Build & Publish Docker Image to Docker Hub
-          docker-username: ${DOCKER_USERNAME}
-          docker-password: ${DOCKER_PASSWORD}
-          image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
-
-      # - name: Docker build and push to ACR
-      #   run: |
-      #     docker build -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.ENTITY_SERVICE_REPOSITORY_NAME }}:${{ github.sha }} -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.ENTITY_SERVICE_REPOSITORY_NAME }}:${{ env.VERSION_TAG }} ./packages/entity_service
-      #     docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.ENTITY_SERVICE_REPOSITORY_NAME }} --all-tags
+            echo Build << parameters.app_name >> docker image
+      - run:
+          name: Publish Docker Image
+          command: |
+            echo Publish << parameters.app_name >>:${CIRCLE_SHA1}
+            echo Publish << parameters.app_name >>:<< pipeline.parameters.version_tag >>
 
   deploy:
     parameters:
