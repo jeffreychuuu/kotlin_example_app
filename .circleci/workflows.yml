@@ -45,7 +45,7 @@ jobs:
       - run: 
           name: Gradlew Clean Build
           command: |
-            ./gradlew clean build
+            cd ~/<< parameters.app_name >> && ./gradlew clean build
       - run:
           name: Build Docker Image
           command: |
