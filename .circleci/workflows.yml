@@ -119,12 +119,12 @@ workflows:
             - Build rdbms_service
           app_name: rdbms_service
 
-  nothing_to_run:
-    when:
-      and:
-        - not: << pipeline.parameters.grpc-lib-modified >>
-        - not: << pipeline.parameters.mongo-service-modified >>
-        - not: << pipeline.parameters.rdbms-service-modified >>
-    jobs:
-      - done:
-          name: Nothing to run
+  # nothing_to_run:
+  #   when:
+  #     and:
+  #       - not: << pipeline.parameters.grpc-lib-modified >>
+  #       - not: << pipeline.parameters.mongo-service-modified >>
+  #       - not: << pipeline.parameters.rdbms-service-modified >>
+  #   jobs:
+  #     - done:
+  #         name: Nothing to run
