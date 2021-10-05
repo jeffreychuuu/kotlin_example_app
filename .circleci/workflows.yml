@@ -86,37 +86,37 @@ workflows:
   grpc_lib:
     when: << pipeline.parameters.grpc-lib-modified >>
     jobs:
-      - build_grpc_lib:
+      - build:
           name: Build grpc_lib
           app_name: grpc_lib
-      - deploy_grpc_lib:
+      - deploy:
           name: Deploy grpc_lib
           requires:
-            - build_grpc_lib
+            - Build grpc_lib
           app_name: grpc_lib
 
   mongo_service:
     when: << pipeline.parameters.mongo-service-modified >>
     jobs:
-      - build_mongo_service:
+      - build:
           name: Build mongo_service
           app_name: mongo_service
-      - deploy_mongo_service:
+      - deploy:
           name: Deploy mongo_service
           requires:
-            - build_mongo_service
+            - Build mongo_service
           app_name: mongo_service
 
   rdbms_service:
     when: << pipeline.parameters.rdbms-service-modified >>
     jobs:
-      - build_rdbms_service:
+      - build:
           name: Build rdbms_service
           app_name: rdbms_service
-      - deploy_rdbms_service:
+      - deploy:
           name: Deploy rdbms_service
           requires:
-            - build_rdbms_service
+            - Build rdbms_service
           app_name: rdbms_service
 
   nothing_to_run:
