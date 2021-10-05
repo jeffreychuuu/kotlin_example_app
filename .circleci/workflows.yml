@@ -42,10 +42,14 @@ jobs:
 
     steps:
       - checkout
+      - run:
+          name: Make gradlew executable
+          command: |
+            chmod +x ./gradlew
       - run: 
           name: Gradlew Clean Build
           command: |
-            cd ~/<< parameters.app_name >> && ./gradlew clean build
+            ./gradlew clean build
       - run:
           name: Build Docker Image
           command: |
