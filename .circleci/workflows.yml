@@ -55,8 +55,8 @@ jobs:
         type: string
 
     docker:
-      resource_class: medium
       - image: cimg/base:2021.04
+    resource_class: medium
 
     working_directory: ~/<< parameters.app_name >>
 
@@ -70,8 +70,8 @@ jobs:
 
   all_filtered_job:
     docker:
-      resource_class: small
       - image: cimg/base:2021.04
+    resource_class: small
       
     steps:
       - run:
