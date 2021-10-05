@@ -44,7 +44,7 @@ jobs:
           name: Hash dependency info
           command: |
             mkdir -p build
-            md5sum **/gradle-wrapper.properties **/*.gradle* > build/deps.md5
+            md5sum gradle/wrapper/gradle-wrapper.properties settings.gradle.kts build.gradle.kts > build/deps.md5
       - restore_cache:
           key: gradle-{{ checksum "build/deps.md5" }}
       - run:
