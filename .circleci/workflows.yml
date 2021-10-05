@@ -46,16 +46,6 @@ jobs:
           name: Gradlew Clean Build
           command: |
             ./gradlew clean build
-      - docker/publish:
-          name: Build & Publish Docker Image to Docker Hub
-          docker-username: ${DOCKER_USERNAME}
-          docker-password: ${DOCKER_PASSWORD}
-          image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
-
-      # - name: Docker build and push to ACR
-      #   run: |
-      #     docker build -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.ENTITY_SERVICE_REPOSITORY_NAME }}:${{ github.sha }} -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.ENTITY_SERVICE_REPOSITORY_NAME }}:${{ env.VERSION_TAG }} ./packages/entity_service
-      #     docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.ENTITY_SERVICE_REPOSITORY_NAME }} --all-tags
 
   deploy:
     parameters:
@@ -90,17 +80,17 @@ jobs:
 workflows:
   version: 2
 
-  grpc_lib:
-    when: << pipeline.parameters.grpc-lib-modified >>
-    jobs:
-      - build:
-          name: Build grpc_lib
-          app_name: grpc_lib
-      - deploy:
-          name: Deploy grpc_lib
-          requires:
-            - Build grpc_lib
-          app_name: grpc_lib
+  # grpc_lib:
+  #   when: << pipeline.parameters.grpc-lib-modified >>
+  #   jobs:
+  #     - build:
+  #         name: Build grpc_lib
+  #         app_name: grpc_lib
+  #     - deploy:
+  #         name: Deploy grpc_lib
+  #         requires:
+  #           - Build grpc_lib
+  #         app_name: grpc_lib
 
   mongo_service:
     when: << pipeline.parameters.mongo-service-modified >>
@@ -108,6 +98,11 @@ workflows:
       - build:
           name: Build mongo_service
           app_name: mongo_service
+      - docker/publish:
+          name: Build Docker Image
+          docker-username: ${DOCKER_USERNAME}
+          docker-password: ${DOCKER_PASSWORD}
+          image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
       - deploy:
           name: Deploy mongo_service
           requires:
@@ -120,6 +115,11 @@ workflows:
       - build:
           name: Build rdbms_service
           app_name: rdbms_service
+      - docker/publish:
+          name: Build Docker Image
+          docker-username: ${DOCKER_USERNAME}
+          docker-password: ${DOCKER_PASSWORD}
+          image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
       - deploy:
           name: Deploy rdbms_service
           requires:
