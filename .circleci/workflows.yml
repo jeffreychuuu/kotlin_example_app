@@ -49,7 +49,7 @@ jobs:
       - run: 
           name: Gradlew Clean Build
           command: |
-            cd << parameters.app_name >> && ./gradlew clean build
+            cd << parameters.app_name >> && ./gradlew clean build -x test
       - run:
           name: Build Docker Image
           command: |
