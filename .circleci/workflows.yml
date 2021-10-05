@@ -108,7 +108,7 @@ workflows:
 
   nothing_to_run:
     when:
-      or:
+      and:
         - not: << pipeline.parameters.grpc-lib-modified >>
         - not: << pipeline.parameters.mongo-service-modified >>
         - not: << pipeline.parameters.rdbms-service-modified >>
