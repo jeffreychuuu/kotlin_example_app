@@ -47,13 +47,10 @@ jobs:
             md5sum gradle/wrapper/gradle-wrapper.properties settings.gradle.kts build.gradle.kts > build/deps.md5
       - restore_cache:
           key: gradle-{{ checksum "build/deps.md5" }}
-      - run:
-          name: Make gradlew executable
+      - run: 
+          name: Gradlew Build
           command: |
             chmod +x gradlew
-      - run: 
-          name: Gradlew Clean Build
-          command: |
             ./gradlew build -x test
       - save_cache:
           key: gradle-{{ checksum "build/deps.md5" }}
