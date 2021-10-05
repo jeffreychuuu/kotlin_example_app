@@ -6,16 +6,10 @@ workflows:
   setup:
     jobs:
       - path-filtering/filter:
-          name: Decision Making on Services
-          base-revision: main
-          mapping: |
-            mongo_service/.* mongo-service-modified true
-            rdbms_service/.* rdbms-service-modified true
-          config-path: .circleci/services_workflow.yml
-
-      - path-filtering/filter:
-          name: Decision Making on Lib
+          name: Decision Making
           base-revision: main
           mapping: |
             grpc_lib/.* grpc-lib-modified true
-          config-path: .circleci/lib_workflow.yml
+            mongo_service/.* mongo-service-modified true
+            rdbms_service/.* rdbms-service-modified true
+          config-path: .circleci/workflows.yml
