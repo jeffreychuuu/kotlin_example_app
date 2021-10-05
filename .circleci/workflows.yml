@@ -130,7 +130,7 @@ workflows:
       - deploy:
           name: Deploy rdbms_service
           requires:
-            - Publish rdbms_service docker image
+            - Build rdbms_service
           app_name: rdbms_service
 
   all_filtered:
