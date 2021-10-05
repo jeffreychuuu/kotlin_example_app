@@ -21,8 +21,10 @@ jobs:
       app_name:
         type: string
 
-    executor: machine
-    resource_class: medium
+    machine:
+      resource_class: medium
+      image: ubuntu-2004:202010-01
+
     working_directory: ~/<< parameters.app_name >>
 
     steps:
@@ -37,8 +39,10 @@ jobs:
       app_name:
         type: string
 
-    executor: machine
-    resource_class: medium
+    machine:
+      resource_class: medium
+      image: ubuntu-2004:202010-01
+
     working_directory: ~/<< parameters.app_name >>
 
     steps:
