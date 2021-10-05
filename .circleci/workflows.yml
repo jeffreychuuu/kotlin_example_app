@@ -16,12 +16,11 @@ parameters:
     default: false
 
 commands:
-  azure-cli-install-login:
+  aws-login:
     steps:
       - run:
-          name: install azure cli
-          command: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-      - azure-cli/login-with-service-principal
+          name: Login in to AWS
+          command: echo login to AWS
 
 jobs:
   build:
@@ -55,7 +54,7 @@ jobs:
 
     steps:
       - checkout
-      - azure-cli-install-login
+      - aws-login
       - run:
           name: echo deploy message
           command: |
