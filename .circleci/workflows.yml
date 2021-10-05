@@ -127,7 +127,7 @@ workflows:
           requires:
             - Build rdbms_service
           name: Publish rdbms_service docker image
-          dockerfile: rdbms_service/Dockerfile
+          attach-at: rdbms_service
           image: << pipeline.parameters.docker_registry_name >>/rdbms_service
           tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
       - deploy:
