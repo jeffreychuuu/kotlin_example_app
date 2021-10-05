@@ -30,6 +30,27 @@ graphiql:
 
 ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
 spring:
+  ## kafka
+  kafka:
+    bootstrap-servers: dory.srvs.cloudkafka.com:9092
+    template:
+      default-topic: y8p0bb6h-topic
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: consumer-group
+      enable-auto-commit: true
+      auto-commit-interval: 1000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    properties:
+      security:
+        protocol: SASL_PLAINTEXT
+      sasl:
+        mechanism: SCRAM-SHA-256
+        jaas:
+          config: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="y8p0bb6h" password="OyL8Oth-caevYLdaW8tBTg7m8I1It8vt";'
   datasource:
     hikari:
       connectionTimeout: 20000

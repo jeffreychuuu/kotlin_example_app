@@ -4,15 +4,13 @@ import com.example.kotlin_example_app.article.dto.CreateArticleDto
 import com.example.kotlin_example_app.article.dto.UpdateArticleDto
 import com.example.kotlin_example_app.article.entities.ArticleEntity
 import com.example.kotlin_example_app.externalService.MongoService
-import com.example.kotlin_example_app.retrofit.MongoServiceRestApi
 import com.example.kotlin_example_app.util.RedisUtil
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import retrofit2.Retrofit
 import javax.annotation.Resource

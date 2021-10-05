@@ -37,6 +37,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("org.springframework.kafka:spring-kafka:2.7.7")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 //    implementation(project(":grpc_lib"))
 }

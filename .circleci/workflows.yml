@@ -108,4 +108,5 @@ workflows:
         - not: << pipeline.parameters.mongo-service-modified >>
         - not: << pipeline.parameters.rdbms-service-modified >>
     jobs:
-      - done
+      - done:
+          name: Nothing to run
