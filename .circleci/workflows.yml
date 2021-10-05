@@ -50,6 +50,7 @@ jobs:
             ./gradlew clean build -x test
       - docker/build:
           image: ${DOCKER_LOGIN}/<< parameters.app_name >>
+          tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
       - docker/check
       - docker/push:
           image: ${DOCKER_LOGIN}/<< parameters.app_name >>
