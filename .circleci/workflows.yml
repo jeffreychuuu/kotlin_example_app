@@ -68,17 +68,13 @@ jobs:
           command: |
             echo Deploy << parameters.app_name >>:<< pipeline.parameters.version_tag >> to EKS
 
-  # done:
-  #   machine:
-  #     resource_class: medium
-  #     image: ubuntu-2004:202010-01
-
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: echo done message
-  #         command: |
-  #           echo Done!!!
+  all_filtered_job:
+    steps:
+      - checkout
+      - run:
+          name: echo done message
+          command: |
+            echo All Workflows have been filtered from this Pipeline.No Jobs have been run.
 
 workflows:
   version: 2
@@ -119,12 +115,12 @@ workflows:
             - Build rdbms_service
           app_name: rdbms_service
 
-  # nothing_to_run:
-  #   when:
-  #     and:
-  #       - not: << pipeline.parameters.grpc-lib-modified >>
-  #       - not: << pipeline.parameters.mongo-service-modified >>
-  #       - not: << pipeline.parameters.rdbms-service-modified >>
-  #   jobs:
-  #     - done:
-  #         name: Nothing to run
+  all_filtered:
+    when:
+      and:
+        - not: << pipeline.parameters.grpc-lib-modified >>
+        - not: << pipeline.parameters.mongo-service-modified >>
+        - not: << pipeline.parameters.rdbms-service-modified >>
+    jobs:
+      - all_filtered_job:
+          name: All filtered Job
