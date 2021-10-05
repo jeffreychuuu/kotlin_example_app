@@ -52,6 +52,22 @@ jobs:
           command: |
             echo deploy << parameters.app_name >>
 
+  done:
+    parameters:
+      app_name:
+        type: string
+
+    machine:
+      resource_class: medium
+      image: ubuntu-2004:202010-01
+
+    steps:
+      - checkout
+      - run:
+          name: echo done message
+          command: |
+            echo Done!!!
+
 workflows:
   version: 2
 
@@ -84,3 +100,12 @@ workflows:
       - deploy:
           name: Deploy rdbms_service
           app_name: rdbms_service
+
+  nothing_to_run:
+    when:
+      or:
+        - not: << pipeline.parameters.grpc-lib-modified >>
+        - not: << pipeline.parameters.mongo-service-modified >>
+        - not: << pipeline.parameters.rdbms-service-modified >>
+    jobs:
+      - done
