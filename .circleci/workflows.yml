@@ -41,9 +41,8 @@ jobs:
     # working_directory: ~/<< parameters.app_name >>
 
     steps:
-      - checkout
-      - attach_workspace:
-          at: << parameters.app_name >>
+      - checkout:
+          path: << parameters.app_name >>
       - run:
           name: ls
           command: |
