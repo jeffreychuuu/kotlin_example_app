@@ -44,10 +44,6 @@ jobs:
       - checkout:
           path: ~/build
       - run:
-          name: ls
-          command: |
-            ls
-      - run:
           name: Make gradlew executable
           command: |
             chmod +x gradlew
@@ -57,6 +53,7 @@ jobs:
             ./gradlew clean build -x test
       - docker/build:
           image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
+      - docker/check
       - docker/push:
           image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
           tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
