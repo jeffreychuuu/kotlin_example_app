@@ -35,7 +35,7 @@ jobs:
         type: string
 
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/base:2021.04
     resource_class: medium
 
     working_directory: ~/<< parameters.app_name >>
