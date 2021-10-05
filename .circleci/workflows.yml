@@ -38,14 +38,10 @@ jobs:
       resource_class: medium
       image: ubuntu-2004:202010-01
 
-    working_directory: << parameters.app_name >>
+    working_directory: ~/<< parameters.app_name >>
 
     steps:
       - checkout
-      - run:
-          name: ls
-          command: |
-            ls
       - run:
           name: Make gradlew executable
           command: |
@@ -54,6 +50,12 @@ jobs:
           name: Gradlew Clean Build
           command: |
             cd << parameters.app_name >> && ./gradlew clean build -x test
+      - docker/build:
+          dockerfile: << parameters.app_name >>/Dockerfile
+          image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
+      - docker/push:
+          image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
+          tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
 
   deploy:
     parameters:
@@ -64,7 +66,7 @@ jobs:
       - image: cimg/base:2021.04
     resource_class: medium
 
-    working_directory: << parameters.app_name >>
+    working_directory: ~/<< parameters.app_name >>
 
     steps:
       - checkout
@@ -118,13 +120,13 @@ workflows:
       - build:
           name: Build rdbms_service
           app_name: rdbms_service
-      - docker/publish:
-          requires:
-            - Build rdbms_service
-          name: Publish rdbms_service docker image
-          attach-at: rdbms_service
-          image: << pipeline.parameters.docker_registry_name >>/rdbms_service
-          tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
+      # - docker/publish:
+      #     requires:
+      #       - Build rdbms_service
+      #     name: Publish rdbms_service docker image
+      #     dockerfile: rdbms_service/Dockerfile
+      #     image: << pipeline.parameters.docker_registry_name >>/rdbms_service
+      #     tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
       - deploy:
           name: Deploy rdbms_service
           requires:
