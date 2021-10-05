@@ -38,10 +38,14 @@ jobs:
       resource_class: medium
       image: ubuntu-2004:202010-01
 
-    working_directory: ~/<< parameters.app_name >>
+    working_directory: << parameters.app_name >>
 
     steps:
       - checkout
+      - run:
+          name: ls
+          command: |
+            ls
       - run:
           name: Make gradlew executable
           command: |
@@ -50,15 +54,6 @@ jobs:
           name: Gradlew Clean Build
           command: |
             cd << parameters.app_name >> && ./gradlew clean build -x test
-      - run:
-          name: Build Docker Image
-          command: |
-            echo Build << parameters.app_name >> docker image
-      - run:
-          name: Publish Docker Image
-          command: |
-            echo Publish << parameters.app_name >>:${CIRCLE_SHA1}
-            echo Publish << parameters.app_name >>:<< pipeline.parameters.version_tag >>
 
   deploy:
     parameters:
@@ -69,7 +64,7 @@ jobs:
       - image: cimg/base:2021.04
     resource_class: medium
 
-    working_directory: ~/<< parameters.app_name >>
+    working_directory: << parameters.app_name >>
 
     steps:
       - checkout
