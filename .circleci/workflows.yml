@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
-  docker: circleci/docker@1.5.0
+  docker: circleci/docker@1.7.0
 
 parameters:
   grpc-lib-modified:
@@ -17,6 +17,9 @@ parameters:
   version_tag:
     type: string
     default: latest
+  docker_registry_name:
+    type: string
+    default: jeffreychuuu
 
 commands:
   aws-login:
@@ -31,14 +34,18 @@ jobs:
       app_name:
         type: string
 
-    machine:
-      resource_class: medium
-      image: ubuntu-2004:202010-01
+    docker:
+      - image: cimg/openjdk:11.0
+    resource_class: medium
 
     working_directory: ~/<< parameters.app_name >>
 
     steps:
       - checkout
+      - run: 
+          name: Gradlew Clean Build
+          command: |
+            gradlew clean build
       - run:
           name: Build Docker Image
           command: |
@@ -82,17 +89,17 @@ jobs:
 workflows:
   version: 2
 
-  grpc_lib:
-    when: << pipeline.parameters.grpc-lib-modified >>
-    jobs:
-      - build:
-          name: Build grpc_lib
-          app_name: grpc_lib
-      - deploy:
-          name: Deploy grpc_lib
-          requires:
-            - Build grpc_lib
-          app_name: grpc_lib
+  # grpc_lib:
+  #   when: << pipeline.parameters.grpc-lib-modified >>
+  #   jobs:
+  #     - build:
+  #         name: Build grpc_lib
+  #         app_name: grpc_lib
+  #     - deploy:
+  #         name: Deploy grpc_lib
+  #         requires:
+  #           - Build grpc_lib
+  #         app_name: grpc_lib
 
   mongo_service:
     when: << pipeline.parameters.mongo-service-modified >>
