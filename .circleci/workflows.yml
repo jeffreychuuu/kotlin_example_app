@@ -31,13 +31,9 @@ jobs:
       app_name:
         type: string
 
-    # machine:
-    #   resource_class: medium
-    #   image: ubuntu-2004:202010-01
-
-    docker:
-      - image: cimg/base:2021.04
-    resource_class: medium
+    machine:
+      resource_class: medium
+      image: ubuntu-2004:202010-01
 
     working_directory: ~/build/<< parameters.app_name >>
 
