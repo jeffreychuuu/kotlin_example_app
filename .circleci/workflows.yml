@@ -83,6 +83,8 @@ workflows:
           app_name: grpc_lib
       - deploy:
           name: Deploy grpc_lib
+          requires:
+            - build
           app_name: grpc_lib
 
   mongo_service:
@@ -93,6 +95,8 @@ workflows:
           app_name: mongo_service
       - deploy:
           name: Deploy mongo_service
+          requires:
+            - build
           app_name: mongo_service
 
   rdbms_service:
@@ -103,6 +107,8 @@ workflows:
           app_name: rdbms_service
       - deploy:
           name: Deploy rdbms_service
+          requires:
+            - build
           app_name: rdbms_service
 
   nothing_to_run:
