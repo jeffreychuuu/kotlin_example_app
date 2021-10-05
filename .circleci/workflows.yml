@@ -42,6 +42,12 @@ jobs:
 
     steps:
       - checkout
+      - persist_to_workspace:
+          root: artifacts
+      - run:
+          name: ls
+          command: |
+            ls
       - run:
           name: Make gradlew executable
           command: |
@@ -51,7 +57,6 @@ jobs:
           command: |
             cd << parameters.app_name >> && ./gradlew clean build -x test
       - docker/build:
-          attach-at: << parameters.app_name >>
           dockerfile: << parameters.app_name >>/Dockerfile
           image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
       - docker/push:
