@@ -14,13 +14,16 @@ parameters:
   rdbms-service-modified:
     type: boolean
     default: false
+  version_tag:
+    type: string
+    default: latest
 
 commands:
   aws-login:
     steps:
       - run:
           name: Login in to AWS
-          command: echo login to AWS
+          command: echo Login to AWS
 
 jobs:
   build:
@@ -37,9 +40,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: echo build message
+          name: Build Docker Image
           command: |
-            echo build << parameters.app_name >>
+            echo Build << parameters.app_name >> docker image
+      - run:
+          name: Publish Docker Image
+          command: |
+            echo Publish << parameters.app_name >>:${CIRCLE_SHA1}
+            echo Publish << parameters.app_name >>:<< pipeline.parameters.version_tag >>
 
   deploy:
     parameters:
@@ -56,9 +64,9 @@ jobs:
       - checkout
       - aws-login
       - run:
-          name: echo deploy message
+          name: Deploy Docker Image to EKS
           command: |
-            echo deploy << parameters.app_name >>
+            echo Deploy << parameters.app_name >>:<< pipeline.parameters.version_tag >> to EKS
 
   done:
     machine:
