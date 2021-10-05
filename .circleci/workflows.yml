@@ -99,16 +99,14 @@ workflows:
           name: Build mongo_service
           app_name: mongo_service
       - docker/publish:
-          name: Build Docker Image for mongo_service
-          requires:
-            - Build mongo_service
+          name: Build Docker Image
           docker-username: ${DOCKER_USERNAME}
           docker-password: ${DOCKER_PASSWORD}
           image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
       - deploy:
           name: Deploy mongo_service
           requires:
-            - Build Docker Image for mongo_service
+            - Build mongo_service
           app_name: mongo_service
 
   rdbms_service:
@@ -118,16 +116,14 @@ workflows:
           name: Build rdbms_service
           app_name: rdbms_service
       - docker/publish:
-          name: Build Docker Image for rdbms_service
-          requires:
-            - Build rdbms_service
+          name: Build Docker Image
           docker-username: ${DOCKER_USERNAME}
           docker-password: ${DOCKER_PASSWORD}
           image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
       - deploy:
           name: Deploy rdbms_service
           requires:
-            - Build Docker Image for rdbms_service
+            - Build rdbms_service
           app_name: rdbms_service
 
   all_filtered:
