@@ -11,7 +11,7 @@ workflows:
           mapping: |
             mongo_service/.* mongo-service-modified true
             rdbms_service/.* rdbms-service-modified true
-          config-path: .circleci/services_workflow.yml
+          config-path: .circleci/lib_workflow.yml
 
       - path-filtering/filter:
           name: Decision Making on Lib
