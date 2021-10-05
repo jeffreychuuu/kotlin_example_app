@@ -38,11 +38,11 @@ jobs:
       resource_class: medium
       image: ubuntu-2004:202010-01
 
-    working_directory: ~/app/<< parameters.app_name >>
+    working_directory: ~/<< parameters.app_name >>
 
     steps:
       - checkout:
-          path: ~/app
+          path: ~
       - run:
           name: ls
           command: |
