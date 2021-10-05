@@ -41,6 +41,13 @@ jobs:
       - checkout:
           path: ~/build
       - run:
+          name: Hash dependency info
+          command: |
+            mkdir -p build
+            md5sum gradle.properties settings.gradle build.gradle **/build.gradle > build/deps.md5
+      - restore_cache:
+          key: gradle-{{ checksum "build/deps.md5" }}
+      - run:
           name: Make gradlew executable
           command: |
             chmod +x gradlew
@@ -48,6 +55,11 @@ jobs:
           name: Gradlew Clean Build
           command: |
             ./gradlew clean build -x test
+      - save_cache:
+          key: gradle-{{ checksum "build/deps.md5" }}
+          paths:
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
       - docker/build:
           image: ${DOCKER_LOGIN}/<< parameters.app_name >>
           tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
