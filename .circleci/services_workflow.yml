@@ -1,0 +1,114 @@
+version: 2.1
+
+orbs:
+  azure-cli: circleci/azure-cli@1.1.0
+  docker: circleci/docker@1.5.0
+
+parameters:
+  mongo-service-modified:
+    type: boolean
+    default: false
+  rdbms-service-modified:
+    type: boolean
+    default: false
+  version_tag:
+    type: string
+    default: latest
+
+commands:
+  aws-login:
+    steps:
+      - run:
+          name: Login in to AWS
+          command: echo Login to AWS
+
+jobs:
+  build:
+    parameters:
+      app_name:
+        type: string
+
+    machine:
+      resource_class: medium
+      image: ubuntu-2004:202010-01
+
+    working_directory: ~/<< parameters.app_name >>
+
+    steps:
+      - checkout
+      - run:
+          name: Build Docker Image
+          command: |
+            echo Build << parameters.app_name >> docker image
+      - run:
+          name: Publish Docker Image
+          command: |
+            echo Publish << parameters.app_name >>:${CIRCLE_SHA1}
+            echo Publish << parameters.app_name >>:<< pipeline.parameters.version_tag >>
+
+  deploy:
+    parameters:
+      app_name:
+        type: string
+
+    machine:
+      resource_class: medium
+      image: ubuntu-2004:202010-01
+
+    working_directory: ~/<< parameters.app_name >>
+
+    steps:
+      - checkout
+      - aws-login
+      - run:
+          name: Deploy Docker Image to EKS
+          command: |
+            echo Deploy << parameters.app_name >>:<< pipeline.parameters.version_tag >> to EKS
+
+  done:
+    machine:
+      resource_class: medium
+      image: ubuntu-2004:202010-01
+
+    steps:
+      - checkout
+      - run:
+          name: echo done message
+          command: |
+            echo Done!!!
+
+workflows:
+  version: 2
+
+  mongo_service:
+    when: << pipeline.parameters.mongo-service-modified >>
+    jobs:
+      - build:
+          name: Build mongo_service
+          app_name: mongo_service
+      - deploy:
+          name: Deploy mongo_service
+          requires:
+            - Build mongo_service
+          app_name: mongo_service
+
+  rdbms_service:
+    when: << pipeline.parameters.rdbms-service-modified >>
+    jobs:
+      - build:
+          name: Build rdbms_service
+          app_name: rdbms_service
+      - deploy:
+          name: Deploy rdbms_service
+          requires:
+            - Build rdbms_service
+          app_name: rdbms_service
+
+  nothing_to_run:
+    when:
+      and:
+        - not: << pipeline.parameters.mongo-service-modified >>
+        - not: << pipeline.parameters.rdbms-service-modified >>
+    jobs:
+      - done:
+          name: Nothing to run
