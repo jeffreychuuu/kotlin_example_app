@@ -38,11 +38,11 @@ jobs:
       resource_class: medium
       image: ubuntu-2004:202010-01
 
-    working_directory: ~/<< parameters.app_name >>
+    working_directory: ~/build/<< parameters.app_name >>
 
     steps:
       - checkout:
-          path: ~
+          path: ~/build
       - run:
           name: ls
           command: |
@@ -50,13 +50,12 @@ jobs:
       - run:
           name: Make gradlew executable
           command: |
-            cd << parameters.app_name >> && chmod +x gradlew
+            chmod +x gradlew
       - run: 
           name: Gradlew Clean Build
           command: |
-            cd << parameters.app_name >> && ./gradlew clean build -x test
+            ./gradlew clean build -x test
       - docker/build:
-          dockerfile: << parameters.app_name >>/Dockerfile
           image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
       - docker/push:
           image: << pipeline.parameters.docker_registry_name >>/<< parameters.app_name >>
@@ -71,10 +70,11 @@ jobs:
       - image: cimg/base:2021.04
     resource_class: medium
 
-    working_directory: ~/<< parameters.app_name >>
+    working_directory: ~/deploy/<< parameters.app_name >>
 
     steps:
-      - checkout
+      - checkout:
+          path: ~/deploy
       - aws-login
       - run:
           name: Deploy Docker Image to EKS
