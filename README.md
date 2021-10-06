@@ -12,6 +12,8 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Redis](https://redis.io/) - An open source (BSD licensed), in-memory data structure store, used as a database, cache, and message broker
 - [GraphQL](https://graphql.org/) - A data query and manipulation language for APIs
 - [gRPC](https://grpc.io/) - A modern open source high performance Remote Procedure Call (RPC) framework that can run in any environment
+- [Retrofit](https://square.github.io/retrofit/) - A type-safe **HTTP client** for Android and Java
+- [Apache Kafka](https://kafka.apache.org/) - Open-source distributed event streaming platform used by thousands of companies for high-performance data pipelines, streaming analytics, data integration, and mission-critical applications
 
 ## Content
 
