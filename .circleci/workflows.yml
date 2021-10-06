@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
-  docker: circleci/docker@1.5.0
+  docker: circleci/docker@1.7.0
 
 parameters:
   grpc-lib-modified:
@@ -35,19 +35,35 @@ jobs:
       resource_class: medium
       image: ubuntu-2004:202010-01
 
-    working_directory: ~/<< parameters.app_name >>
+    working_directory: ~/build/<< parameters.app_name >>
 
     steps:
-      - checkout
+      - checkout:
+          path: ~/build
       - run:
-          name: Build Docker Image
+          name: Hash dependency info
           command: |
-            echo Build << parameters.app_name >> docker image
-      - run:
-          name: Publish Docker Image
+            mkdir -p build
+            md5sum gradle/wrapper/gradle-wrapper.properties settings.gradle.kts build.gradle.kts > build/deps.md5
+      - restore_cache:
+          key: gradle-{{ checksum "build/deps.md5" }}
+      - run: 
+          name: Gradlew Build
           command: |
-            echo Publish << parameters.app_name >>:${CIRCLE_SHA1}
-            echo Publish << parameters.app_name >>:<< pipeline.parameters.version_tag >>
+            chmod +x gradlew
+            ./gradlew build -x test
+      - save_cache:
+          key: gradle-{{ checksum "build/deps.md5" }}
+          paths:
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
+      - docker/build:
+          image: ${DOCKER_LOGIN}/<< parameters.app_name >>
+          tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
+      - docker/check
+      - docker/push:
+          image: ${DOCKER_LOGIN}/<< parameters.app_name >>
+          tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
 
   deploy:
     parameters:
@@ -58,10 +74,11 @@ jobs:
       - image: cimg/base:2021.04
     resource_class: medium
 
-    working_directory: ~/<< parameters.app_name >>
+    working_directory: ~/deploy/<< parameters.app_name >>
 
     steps:
-      - checkout
+      - checkout:
+          path: ~/deploy
       - aws-login
       - run:
           name: Deploy Docker Image to EKS
@@ -82,40 +99,36 @@ jobs:
 workflows:
   version: 2
 
-  grpc_lib:
-    when: << pipeline.parameters.grpc-lib-modified >>
-    jobs:
-      - build:
-          name: Build grpc_lib
-          app_name: grpc_lib
-      - deploy:
-          name: Deploy grpc_lib
-          requires:
-            - Build grpc_lib
-          app_name: grpc_lib
+  # grpc_lib:
+  #   when: << pipeline.parameters.grpc-lib-modified >>
+  #   jobs:
+  #     - build:
+  #         name: Build grpc_lib
+  #         app_name: grpc_lib
+  #     - deploy:
+  #         name: Deploy grpc_lib
+  #         requires:
+  #           - Build grpc_lib
+  #         app_name: grpc_lib
 
   mongo_service:
     when: << pipeline.parameters.mongo-service-modified >>
     jobs:
       - build:
-          name: Build mongo_service
           app_name: mongo_service
       - deploy:
-          name: Deploy mongo_service
           requires:
-            - Build mongo_service
+            - build
           app_name: mongo_service
 
   rdbms_service:
     when: << pipeline.parameters.rdbms-service-modified >>
     jobs:
       - build:
-          name: Build rdbms_service
           app_name: rdbms_service
       - deploy:
-          name: Deploy rdbms_service
           requires:
-            - Build rdbms_service
+            - build
           app_name: rdbms_service
 
   all_filtered:
