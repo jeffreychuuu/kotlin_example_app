@@ -28,14 +28,15 @@ graphiql:
   mapping: /graphiql
   endpoint: /graphql
 
+
 ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
 spring:
   ## kafka
   kafka:
     #    bootstrap-servers: dory.srvs.cloudkafka.com:9092
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: dory-01.srvs.cloudkafka.com:9094, dory-02.srvs.cloudkafka.com:9094, dory-03.srvs.cloudkafka.com:9094
     template:
-      default-topic: Topic1
+      default-topic: y8p0bb6h-topic
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -43,6 +44,13 @@ spring:
       retries: 0
       batch-size: 16384
       buffer-memory: 33554432
+    properties:
+      security:
+        protocol: SASL_SSL
+      sasl:
+        mechanism: SCRAM-SHA-256
+        jaas:
+          config: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="y8p0bb6h" password="OyL8Oth-caevYLdaW8tBTg7m8I1It8vt";'
   datasource:
     hikari:
       connectionTimeout: 20000

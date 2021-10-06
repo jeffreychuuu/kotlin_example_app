@@ -1226,6 +1226,18 @@ class MongoService {
 
 ## Adding Kafka Support
 
+### Preparation
+
+1. Reach [CloudKarafka](https://www.cloudkarafka.com/) to create a Kafka Cloud Server
+
+2. Remember the connection details and the topic
+
+   ![cloud_kafka](./image/cloud_kafka.png)
+
+![cloud_kafka_topic](./image/cloud_kafka_topic.png)
+
+### Setup
+
 Add the package to `build.gradle.kts` 
 
 ```yaml
@@ -1240,9 +1252,9 @@ Define the Kafka config to `application.yml` for producer
 spring:
   ## kafka
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${CLOUDKARAFKA_BROKERS:velomobile-01.srvs.cloudkafka.com:9094,velomobile-02.srvs.cloudkafka.com:9094,velomobile-03.srvs.cloudkafka.com:9094}
     template:
-      default-topic: Topic1
+      default-topic: ${CLOUDKARAFKA_USERNAME}-topic
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -1250,6 +1262,13 @@ spring:
       retries: 0
       batch-size: 16384
       buffer-memory: 33554432
+    properties:
+      security:
+        protocol: SASL_SSL
+      sasl:
+        mechanism: SCRAM-SHA-256
+        jaas:
+          config: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_USERNAME}" password="${KAFKA_PASSWORD}";'
 ```
 
 Define a Kafka rest controller
@@ -1273,7 +1292,7 @@ Define a Kafka service to use Kafka template
 class KafkaService(val kafkaTemplate: KafkaTemplate<String, String>) {
     fun sendMessage(@PathVariable input: String?) {
         try {
-            kafkaTemplate.send("Topic1", input)
+            kafkaTemplate.send("${CLOUDKARAFKA_USERNAME}-topic", input)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -1289,11 +1308,11 @@ Define the Kafka config to `application.yml` for producer
 spring:
   ## kafka
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${CLOUDKARAFKA_BROKERS:velomobile-01.srvs.cloudkafka.com:9094,velomobile-02.srvs.cloudkafka.com:9094,velomobile-03.srvs.cloudkafka.com:9094}
     template:
-      default-topic: Topic1
+      default-topic: ${CLOUDKARAFKA_USERNAME}-topic
     consumer:
-      group-id: consumer-group
+      group-id: ${CLOUDKARAFKA_USERNAME}-consumers
       enable-auto-commit: true
       auto-commit-interval: 1000
       auto-offset-reset: earliest
@@ -1303,6 +1322,13 @@ spring:
     lisener:
       ack-mode: manual_immediate
       poll-timeout: 500S
+    properties:
+      security:
+        protocol: SASL_SSL
+      sasl:
+        mechanism: SCRAM-SHA-256
+        jaas:
+          config: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_USERNAME}" password="${KAFKA_PASSWORD}";'
 ```
 
 Define a Kafka consumer
@@ -1310,7 +1336,7 @@ Define a Kafka consumer
 ```kotlin
 @Component
 class KafkaConsumer {
-    @KafkaListener(topics = ["Topic1"])
+    @KafkaListener(topics = ["${CLOUDKARAFKA_USERNAME}-topic"])
     fun receive(payload: String) {
         LOGGER.info("Received payload='$payload'")
     }

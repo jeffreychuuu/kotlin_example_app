@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class KafkaConsumer {
-    @KafkaListener(topics = ["Topic1"])
+    @KafkaListener(topics = ["y8p0bb6h-topic"])
     fun receive(payload: String) {
         LOGGER.info("Received payload='$payload'")
     }
