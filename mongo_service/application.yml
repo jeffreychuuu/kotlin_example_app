@@ -21,6 +21,23 @@ graphiql:
   endpoint: /graphql
 
 spring:
+  ## kafka
+  kafka:
+    #    bootstrap-servers: dory.srvs.cloudkafka.com:9092
+    bootstrap-servers: localhost:9092
+    template:
+      default-topic: Topic1
+    consumer:
+      group-id: consumer-group
+      enable-auto-commit: true
+      auto-commit-interval: 1000
+      auto-offset-reset: earliest
+      max-poll-records: 500
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    lisener:
+      ack-mode: manual_immediate
+      poll-timeout: 500S
   data:
     ## Mongodb
     mongodb:

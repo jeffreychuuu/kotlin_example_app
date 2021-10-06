@@ -5,6 +5,7 @@ import com.example.kotlin_example_app.article.dto.UpdateArticleDto
 import com.example.kotlin_example_app.article.entities.ArticleEntity
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.kafka.core.KafkaTemplate
@@ -15,20 +16,9 @@ import javax.validation.Valid
 @Tag(name = "ArticleRestController")
 @RestController
 @RequestMapping("/api")
-class ArticleRestController(private val articleService: ArticleService) {
-
-    @Autowired
-    private val template: KafkaTemplate<Any, Any>? = null
-
-    @GetMapping("/send/{input}")
-    fun sendFoo(@PathVariable input: String?) {
-        try {
-            template?.send("y8p0bb6h-topic", input)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
+class ArticleRestController(
+    private val articleService: ArticleService,
+) {
     @GetMapping("/articles")
     fun getAllArticles(): List<ArticleEntity> =
         articleService.findAll()

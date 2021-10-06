@@ -24,6 +24,7 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding gRPC Support](#Adding-gRPC-Support)
 - [Adding MongoDB Support](#Adding-MongoDB-Support)
 - [Adding Retrofit Support](#Adding-Retrofit-Support)
+- [Adding Kafka Support](Adding-Kafka-Support)
 
 ## Get Started
 
@@ -1219,6 +1220,103 @@ class MongoService {
         val mongoServiceRestApi: MongoServiceRestApi = mongoServiceRetrofit.create(MongoServiceRestApi::class.java)
         val response = mongoServiceRestApi.findUserById(id).execute()
         return response.body()
+    }
+}
+```
+
+## Adding Kafka Support
+
+Add the package to `build.gradle.kts` 
+
+```yaml
+implementation("org.springframework.kafka:spring-kafka:2.7.7")
+```
+
+### Producer
+
+Define the Kafka config to `application.yml` for producer
+
+```yaml
+spring:
+  ## kafka
+  kafka:
+    bootstrap-servers: localhost:9092
+    template:
+      default-topic: Topic1
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: 1
+      retries: 0
+      batch-size: 16384
+      buffer-memory: 33554432
+```
+
+Define a Kafka rest controller
+
+```kotlin
+@Tag(name = "KafkaRestController")
+@RestController
+@RequestMapping("/api")
+class KafkaRestController(private val kafkaService: KafkaService) {
+    @GetMapping("kafka/send/{input}")
+    fun sendMessage(@PathVariable input: String?) {
+        return kafkaService.sendMessage(input)
+    }
+}
+```
+
+Define a Kafka service to use Kafka template
+
+```kotlin
+@Service
+class KafkaService(val kafkaTemplate: KafkaTemplate<String, String>) {
+    fun sendMessage(@PathVariable input: String?) {
+        try {
+            kafkaTemplate.send("Topic1", input)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}
+```
+
+### Consumer
+
+Define the Kafka config to `application.yml` for producer
+
+```yaml
+spring:
+  ## kafka
+  kafka:
+    bootstrap-servers: localhost:9092
+    template:
+      default-topic: Topic1
+    consumer:
+      group-id: consumer-group
+      enable-auto-commit: true
+      auto-commit-interval: 1000
+      auto-offset-reset: earliest
+      max-poll-records: 500
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    lisener:
+      ack-mode: manual_immediate
+      poll-timeout: 500S
+```
+
+Define a Kafka consumer
+
+```kotlin
+@Component
+class KafkaConsumer {
+    @KafkaListener(topics = ["Topic1"])
+    fun receive(payload: String) {
+        LOGGER.info("Received payload='$payload'")
+    }
+
+    companion object {
+        private val LOGGER = LoggerFactory.getLogger(KafkaConsumer::class.java)
     }
 }
 ```

@@ -11,3 +11,12 @@ redis:
   command: redis-server --requirepass password
   ports:
     - 6379:6379
+kafka:
+  container_name: kotlin_example_kafka
+  image: spotify/kafka
+  environment:
+    ADVERTISED_HOST: localhost
+    ADVERTISED_PORT: 9092
+  ports:
+    - 2181:2181
+    - 9092:9092

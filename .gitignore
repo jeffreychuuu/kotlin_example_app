@@ -2,3 +2,4 @@
 .DS_STORE
 .gradle
 /grpc_lib/lib
+/.history
