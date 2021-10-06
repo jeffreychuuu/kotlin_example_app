@@ -24,7 +24,7 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding gRPC Support](#Adding-gRPC-Support)
 - [Adding MongoDB Support](#Adding-MongoDB-Support)
 - [Adding Retrofit Support](#Adding-Retrofit-Support)
-- [Adding Kafka Support](Adding-Kafka-Support)
+- [Adding Kafka Support](#Adding-Kafka-Support)
 
 ## Get Started
 
