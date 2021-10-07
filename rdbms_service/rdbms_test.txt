@@ -1,1 +1,1 @@
-It is ${APP_NAME}
+Itt is ${APP_NAME}
