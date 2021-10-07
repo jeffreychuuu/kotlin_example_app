@@ -26,17 +26,17 @@ commands:
           name: Login in to AWS
           command: echo Login to AWS
 
-  envsubst-action:
-    parameters:
-    input_file:
-      type: env_var_name
-    output_file:
-      type: env_var_name
-    steps:
-      - run:
-          command: |
-            envsubst << parameters.input_file >> tmp
-            mv tmp << parameters.output_file >>
+  # envsubst-action:
+  #   parameters:
+  #   input_file:
+  #     type: env_var_name
+  #   output_file:
+  #     type: env_var_name
+  #   steps:
+  #     - run:
+  #         command: |
+  #           envsubst << parameters.input_file >> tmp
+  #           mv tmp << parameters.output_file >>
 
 jobs:
   build:
@@ -53,7 +53,12 @@ jobs:
     steps:
       - checkout:
           path: ~/build
-      - envsubst-action
+      - run:
+          name: Env Subsituton Acton
+          command: |
+            envsubst ${INPUT_FILE} tmp
+            mv tmp ${OUTPUT_FILE}
+            ls ${OUTPUT_FILE}
       - run:
           name: Hash dependency info
           command: |
@@ -130,9 +135,9 @@ workflows:
     jobs:
       - build:
           app_name: mongo_service
-          input_file: test.txt
-          output_file: test.txt
-          env:
+          environment:
+            INPUT_FILE: test.txt
+            OUTPUT_FILE: test.txt
             APP_NAME: mongo_service
       - deploy:
           requires:
@@ -144,10 +149,10 @@ workflows:
     jobs:
       - build:
           app_name: rdbms_service
-          input_file: test.txt
-          output_file: test.txt
-          env:
-            APP_NAME: mongo_service
+          environment:
+            INPUT_FILE: test.txt
+            OUTPUT_FILE: test.txt
+            APP_NAME: rdbms_service
       - deploy:
           requires:
             - build
