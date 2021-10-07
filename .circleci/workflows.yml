@@ -29,8 +29,9 @@ commands:
     steps:
       - run:
           command: |
-            envsubst ${INPUT_FILE} tmp
+            envsubst < "${INPUT_FILE}" > tmp
             mv tmp ${OUTPUT_FILE}
+            ls ${OUTPUT_FILE}
 
 jobs:
   build:
@@ -53,7 +54,6 @@ jobs:
             echo 'export INPUT_FILE="test.txt"' >> $BASH_ENV
             echo 'export OUTPUT_FILE="test.txt"' >> $BASH_ENV
             echo 'export APP_NAME=<< parameters.app_name >>' >> $BASH_ENV
-            ls test.txt
       - envsubst-action
       - run:
           name: Hash dependency info
