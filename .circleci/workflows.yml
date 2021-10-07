@@ -26,6 +26,11 @@ commands:
           command: echo Login to AWS
 
   envsubst-action:
+    paramters:
+      input_file:
+        type: string
+      output_file:
+        type: string
     steps:
       - run:
           name: Environment Variable Subsitution
@@ -45,6 +50,10 @@ jobs:
     parameters:
       app_name:
         type: string
+      test_file_input:
+        type: string
+      test_file_output:
+        type: string
 
     steps:
       - checkout:
@@ -53,16 +62,18 @@ jobs:
           name: Setup common environment variables
           command: |
             echo 'export APP_NAME="<< parameters.app_name >>"' >> $BASH_ENV
-            if [ "<< parameters.app_name >>" == "mongo_service" ]
-            then
-              echo 'export INPUT_FILE="mongo_test.txt"' >> $BASH_ENV
-              echo 'export OUTPUT_FILE="mongo_test.txt"' >> $BASH_ENV
-            elif [ "<< parameters.app_name >>" == "rdbms_service" ]
-            then
-              echo 'export INPUT_FILE="rdbms_test.txt"' >> $BASH_ENV
-              echo 'export OUTPUT_FILE="rdbms_test.txt"' >> $BASH_ENV
-            fi
-      - envsubst-action
+            # if [ "<< parameters.app_name >>" == "mongo_service" ]
+            # then
+            #   echo 'export INPUT_FILE="mongo_test.txt"' >> $BASH_ENV
+            #   echo 'export OUTPUT_FILE="mongo_test.txt"' >> $BASH_ENV
+            # elif [ "<< parameters.app_name >>" == "rdbms_service" ]
+            # then
+            #   echo 'export INPUT_FILE="rdbms_test.txt"' >> $BASH_ENV
+            #   echo 'export OUTPUT_FILE="rdbms_test.txt"' >> $BASH_ENV
+            # fi
+      - envsubst-action:
+          input_file: << parameters.test_file_input >>
+          output_file: << parameters.test_file_output >>
       - run:
           name: Hash dependency info
           command: |
