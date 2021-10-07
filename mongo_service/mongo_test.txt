@@ -1,1 +1,3 @@
-Itt is ${APP_NAME}
+It is ${APP_NAME}
+
+mongo_host = ${MONGO_HOST}
