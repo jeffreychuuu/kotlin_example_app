@@ -3,7 +3,6 @@ version: 2.1
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
   docker: circleci/docker@1.7.0
-  write_file: fenderdigital/write_file@0.0.3
 
 parameters:
   grpc-lib-modified:
