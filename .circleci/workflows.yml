@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
   docker: circleci/docker@1.7.0
+  write_file: fenderdigital/write_file@0.0.3
 
 parameters:
   grpc-lib-modified:
@@ -25,6 +26,18 @@ commands:
           name: Login in to AWS
           command: echo Login to AWS
 
+  envsubst-action:
+    parameters:
+    input_file:
+      type: env_var_name
+    output_file:
+      type: env_var_name
+    steps:
+      - run:
+          command: |
+            envsubst << parameters.input_file >> tmp
+            mv tmp << parameters.output_file >>
+
 jobs:
   build:
     parameters:
@@ -40,6 +53,7 @@ jobs:
     steps:
       - checkout:
           path: ~/build
+      - envsubst-action
       - run:
           name: Hash dependency info
           command: |
@@ -47,7 +61,7 @@ jobs:
             md5sum gradle/wrapper/gradle-wrapper.properties settings.gradle.kts build.gradle.kts > build/deps.md5
       - restore_cache:
           key: gradle-{{ checksum "build/deps.md5" }}
-      - run: 
+      - run:
           name: Gradlew Build
           command: |
             chmod +x gradlew
@@ -89,7 +103,7 @@ jobs:
     docker:
       - image: cimg/base:2021.04
     resource_class: small
-      
+
     steps:
       - run:
           name: echo done message
@@ -116,6 +130,10 @@ workflows:
     jobs:
       - build:
           app_name: mongo_service
+          input_file: test.txt
+          output_file: test.txt
+          env:
+            APP_NAME: mongo_service
       - deploy:
           requires:
             - build
@@ -126,6 +144,10 @@ workflows:
     jobs:
       - build:
           app_name: rdbms_service
+          input_file: test.txt
+          output_file: test.txt
+          env:
+            APP_NAME: mongo_service
       - deploy:
           requires:
             - build
