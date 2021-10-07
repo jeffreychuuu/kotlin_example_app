@@ -25,21 +25,36 @@ commands:
           name: Login in to AWS
           command: echo Login to AWS
 
+  envsubst-action:
+    steps:
+      - run:
+          command: |
+            envsubst ${INPUT_FILE} tmp
+            mv tmp ${OUTPUT_FILE}
+
 jobs:
   build:
-    parameters:
-      app_name:
-        type: string
-
     machine:
       resource_class: medium
       image: ubuntu-2004:202010-01
 
     working_directory: ~/build/<< parameters.app_name >>
 
+    parameters:
+      app_name:
+        type: string
+
     steps:
       - checkout:
           path: ~/build
+      - run:
+          name: Setup common environment variables
+          command: |
+            echo 'export INPUT_FILE="test.txt"' >> $BASH_ENV
+            echo 'export OUTPUT_FILE="test.txt"' >> $BASH_ENV
+            echo 'export APP_NAME=<< parameters.app_name >>' >> $BASH_ENV
+            ls test.txt
+      - envsubst-action
       - run:
           name: Hash dependency info
           command: |
@@ -47,7 +62,7 @@ jobs:
             md5sum gradle/wrapper/gradle-wrapper.properties settings.gradle.kts build.gradle.kts > build/deps.md5
       - restore_cache:
           key: gradle-{{ checksum "build/deps.md5" }}
-      - run: 
+      - run:
           name: Gradlew Build
           command: |
             chmod +x gradlew
@@ -66,15 +81,15 @@ jobs:
           tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
 
   deploy:
-    parameters:
-      app_name:
-        type: string
-
     docker:
       - image: cimg/base:2021.04
     resource_class: medium
 
     working_directory: ~/deploy/<< parameters.app_name >>
+
+    parameters:
+      app_name:
+        type: string
 
     steps:
       - checkout:
@@ -89,7 +104,7 @@ jobs:
     docker:
       - image: cimg/base:2021.04
     resource_class: small
-      
+
     steps:
       - run:
           name: echo done message
