@@ -62,15 +62,13 @@ jobs:
           name: Setup common environment variables
           command: |
             echo 'export APP_NAME="<< parameters.app_name >>"' >> $BASH_ENV
-            # if [ "<< parameters.app_name >>" == "mongo_service" ]
-            # then
-            #   echo 'export INPUT_FILE="mongo_test.txt"' >> $BASH_ENV
-            #   echo 'export OUTPUT_FILE="mongo_test.txt"' >> $BASH_ENV
-            # elif [ "<< parameters.app_name >>" == "rdbms_service" ]
-            # then
-            #   echo 'export INPUT_FILE="rdbms_test.txt"' >> $BASH_ENV
-            #   echo 'export OUTPUT_FILE="rdbms_test.txt"' >> $BASH_ENV
-            # fi
+            if [ "<< parameters.app_name >>" == "mongo_service" ]
+            then
+              echo 'export MONGO_HOST="mongo_host:xxx.xxx.xxx.xxx"' >> $BASH_ENV
+            elif [ "<< parameters.app_name >>" == "rdbms_service" ]
+            then
+              echo 'export RDBMS_HOST="rdbms_host:xxx.xxx.xxx.xxx"' >> $BASH_ENV
+            fi
       - envsubst-action:
           input_file: << parameters.test_file_input >>
           output_file: << parameters.test_file_output >>
@@ -150,6 +148,8 @@ workflows:
     jobs:
       - build:
           app_name: mongo_service
+          test_file_input: mongo_test.txt
+          test_file_output: mongo_test.txt
       - deploy:
           requires:
             - build
@@ -160,6 +160,8 @@ workflows:
     jobs:
       - build:
           app_name: rdbms_service
+          test_file_input: rdbms_test.txt
+          test_file_output: rdbms_test.txt
       - deploy:
           requires:
             - build

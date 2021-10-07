@@ -1,3 +1,3 @@
-It is ${APP_NAME}
+This is ${APP_NAME}
 
 rdbms_host = ${RDBMS_HOST}
