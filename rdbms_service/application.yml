@@ -33,6 +33,7 @@ graphiql:
 spring:
   ## kafka
   kafka:
+    #    bootstrap-servers: dory.srvs.cloudkafka.com:9092
     bootstrap-servers: dory-01.srvs.cloudkafka.com:9094, dory-02.srvs.cloudkafka.com:9094, dory-03.srvs.cloudkafka.com:9094
     template:
       default-topic: y8p0bb6h-topic
