@@ -1,1 +1,1 @@
-It is ${APP_NAME}
+This is ${APP_NAME}

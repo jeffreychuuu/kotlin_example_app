@@ -26,7 +26,6 @@ commands:
           command: echo Login to AWS
 
   envsubst-action:
-    description: "Environment Variable Subsitution"
     steps:
       - run:
           command: |
@@ -55,7 +54,8 @@ jobs:
             echo 'export INPUT_FILE="test.txt"' >> $BASH_ENV
             echo 'export OUTPUT_FILE="test.txt"' >> $BASH_ENV
             echo 'export APP_NAME="<< parameters.app_name >>"' >> $BASH_ENV
-      - envsubst-action
+      - envsubst-action:
+          name: Environment Variable Subsitution
       - run:
           name: Hash dependency info
           command: |
