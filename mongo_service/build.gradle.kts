@@ -24,9 +24,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:2.5.5")
     implementation("org.springframework.boot:spring-boot-starter-data-redis:2.5.5")
     implementation("redis.clients:jedis:3.7.0")
-    implementation("com.graphql-java:graphql-spring-boot-starter:5.0.2")
-    implementation("com.graphql-java:graphiql-spring-boot-starter:5.0.2")
-    implementation("com.graphql-java:graphql-java-tools:5.2.4")
+    implementation("com.graphql-java-kickstart:graphql-spring-boot-starter:12.0.0")
     implementation("org.springframework.kafka:spring-kafka:2.7.7")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

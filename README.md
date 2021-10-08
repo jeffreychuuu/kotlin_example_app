@@ -109,26 +109,29 @@ http://localhost:8080/api-docs
 Add the package to `build.gradle.kts` 
 
 ```yaml
-implementation("com.graphql-java:graphql-spring-boot-starter:5.0.2")
-implementation("com.graphql-java:graphiql-spring-boot-starter:5.0.2")
-implementation("com.graphql-java:graphql-java-tools:5.2.4")
+implementation("com.graphql-java-kickstart:graphql-spring-boot-starter:12.0.0")
 ```
 
-Add the graphql config to `application.yml`
+Add the basic graphql config to `application.yml`
+
+Advance setting for this package please view [here](https://github.com/graphql-java-kickstart/graphql-spring-boot)
 
 ```yaml
-##Graphql
+# Graphql
 graphql:
   servlet:
+    # Sets if GraphQL servlet should be created and exposed. If not specified defaults to "true".
+    enabled: true
+    # Sets the path where GraphQL servlet will be exposed. If not specified defaults to "/graphql"
     mapping: /graphql
-
-##Grpahiql
-graphiql:
-  mapping: /graphiql
-  endpoint: /graphql
+    cors-enabled: true
+  playground:
+    enabled: true
+    mapping: /playground
+    endpoint: /graphql
 ```
 
-Define the graphql schema and place it into `/src/main/resources` as `xxx.graphqls`
+Define the graphql schema and place it into `/src/main/resources/graphql` as `xxx.graphqls`
 
 ```
 type Article {
@@ -195,10 +198,10 @@ class ArticleMutationResolver(private val articleService: ArticleService) : Grap
 }
 ```
 
-Visit the Grpahiql by
+Visit the Graphql Playground by
 
 ```
-http://localhost:8080/graphiql
+http://localhost:8080/playground
 ```
 
 Calling the grpahql api by

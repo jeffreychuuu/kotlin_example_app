@@ -1,7 +1,7 @@
 package com.example.mongo_service.user
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver
 import com.example.mongo_service.user.documents.UserDocument
+import graphql.kickstart.tools.GraphQLQueryResolver
 import org.springframework.stereotype.Component
 
 @Component

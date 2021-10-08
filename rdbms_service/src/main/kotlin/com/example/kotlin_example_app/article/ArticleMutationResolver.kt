@@ -1,9 +1,9 @@
 package com.example.kotlin_example_app.article
 
-import com.coxautodev.graphql.tools.GraphQLMutationResolver
 import com.example.kotlin_example_app.article.dto.CreateArticleDto
 import com.example.kotlin_example_app.article.dto.UpdateArticleDto
 import com.example.kotlin_example_app.article.entities.ArticleEntity
+import graphql.kickstart.tools.GraphQLMutationResolver
 import org.springframework.stereotype.Component
 import java.lang.RuntimeException
 import javax.validation.Valid

@@ -1,7 +1,7 @@
 package com.example.kotlin_example_app.article
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver
 import com.example.kotlin_example_app.article.entities.ArticleEntity
+import graphql.kickstart.tools.GraphQLQueryResolver
 import org.springframework.stereotype.Component
 import java.lang.RuntimeException
 

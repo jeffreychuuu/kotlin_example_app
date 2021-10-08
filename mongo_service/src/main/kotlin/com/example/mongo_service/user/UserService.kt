@@ -25,8 +25,11 @@ class UserService(private val userRepository: UserRepository) {
     @Resource
     private lateinit var redisUtil: RedisUtil
 
-    fun findAll(): List<UserDocument> =
-        userRepository.findAll()
+    fun findAll(): List<UserDocument> {
+        val result = userRepository.findAll()
+        return result
+    }
+
 
     fun save(@Valid createUserDto: CreateUserDto): UserDocument {
         val userDocument: UserDocument = mapper.convertValue<UserDocument>(createUserDto)

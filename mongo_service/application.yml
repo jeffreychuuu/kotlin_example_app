@@ -7,18 +7,21 @@ springdoc:
     path: /api-docs
   swagger-ui:
     enabled: true
-    path: /swagger-ui-custom.html
+    path: /swagger
     operationsSorter: method
 
-##Graphql
+# Graphql
 graphql:
   servlet:
+    # Sets if GraphQL servlet should be created and exposed. If not specified defaults to "true".
+    enabled: true
+    # Sets the path where GraphQL servlet will be exposed. If not specified defaults to "/graphql"
     mapping: /graphql
-
-##Grpahiql
-graphiql:
-  mapping: /graphiql
-  endpoint: /graphql
+    cors-enabled: true
+  playground:
+    enabled: true
+    mapping: /playground
+    endpoint: /graphql
 
 spring:
   ## kafka

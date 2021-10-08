@@ -1,9 +1,9 @@
 package com.example.mongo_service.user
 
-import com.coxautodev.graphql.tools.GraphQLMutationResolver
 import com.example.mongo_service.user.documents.UserDocument
 import com.example.mongo_service.user.dto.CreateUserDto
 import com.example.mongo_service.user.dto.UpdateUserDto
+import graphql.kickstart.tools.GraphQLMutationResolver
 import org.springframework.stereotype.Component
 import javax.validation.Valid
 
