@@ -33,7 +33,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis:2.5.5")
     implementation("redis.clients:jedis:3.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-    implementation("net.devh:grpc-server-spring-boot-starter:2.12.0.RELEASE")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
@@ -44,6 +43,7 @@ dependencies {
     implementation("com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter:4.9.0")
 //    implementation(project(":grpc_lib"))
     api("io.grpc:grpc-kotlin-stub:0.2.1")
+    implementation("net.devh:grpc-server-spring-boot-starter:2.12.0.RELEASE")
 }
 
 protobuf {

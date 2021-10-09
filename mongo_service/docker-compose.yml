@@ -1,4 +1,11 @@
 postgres:
+  container_name: kotlin_example_app_postgres
+  environment:
+    - POSTGRES_PASSWORD=password
+  image: postgres
+  ports:
+    - 5432:5432
+mongo:
   container_name: kotlin_example_app_mongo
   environment:
     MONGO_INITDB_ROOT_USERNAME: root

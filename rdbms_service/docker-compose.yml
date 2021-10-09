@@ -3,12 +3,26 @@ postgres:
   environment:
     - POSTGRES_PASSWORD=password
   image: postgres
+  volumes:
+    - postgres-data:/var/lib/postgresql/data
   ports:
     - 5432:5432
+mongo:
+  container_name: kotlin_example_app_mongo
+  environment:
+    MONGO_INITDB_ROOT_USERNAME: root
+    MONGO_INITDB_ROOT_PASSWORD: example
+  image: mongo
+  volumes:
+    - mongo-data:/data/db
+  ports:
+    - 27017:27017
 redis:
   container_name: kotlin_example_app_redis
   image: redis
   command: redis-server --requirepass password
+  volumes:
+    - redis-data:/data
   ports:
     - 6379:6379
 kafka:
