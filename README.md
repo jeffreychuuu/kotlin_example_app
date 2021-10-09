@@ -1126,7 +1126,7 @@ plugins {
 
 dependencies {
     api("io.grpc:grpc-kotlin-stub:0.2.1")
-    implementation("net.devh:grpc-server-spring-boot-starter:2.12.0.RELEASE")
+    implementation("net.devh:grpc-spring-boot-starter:2.12.0.RELEASE")
 }
 
 protobuf {
