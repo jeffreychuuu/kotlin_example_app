@@ -169,13 +169,13 @@ input UpdateArticleDto {
 
 type Query {
     getAllArticles: [Article]
-    getArticleById(articleId: ID!): Article
+    getArticleById(id: Int!): Article
 }
 
 type Mutation {
     createNewArticle(createArticleDto: CreateArticleDto!) : Article!
-    UpdateArticleDtoById(id: ID!, updateArticleDto: UpdateArticleDto!) : Article!
-    deleteArticleById(id:ID!) : Boolean
+    UpdateArticleDtoById(id: Int!, updateArticleDto: UpdateArticleDto!) : Article!
+    deleteArticleById(id:Int!) : Boolean
 }
 ```
 
@@ -260,13 +260,13 @@ input UpdateArticleDto {
 
 type Query {
     getAllArticles: [Article]
-    getArticleById(articleId: ID!): Article
+    getArticleById(id: Int!): Article
 }
 
 type Mutation {
     createNewArticle(createArticleDto: CreateArticleDto!) : Article!
-    UpdateArticleDtoById(id: ID!, updateArticleDto: UpdateArticleDto!) : Article!
-    deleteArticleById(id:ID!) : Boolean
+    UpdateArticleDtoById(id: Int!, updateArticleDto: UpdateArticleDto!) : Article!
+    deleteArticleById(id:Int!) : Boolean
 }
 ```
 
@@ -301,13 +301,13 @@ input UpdateUserDto {
 
 type Query {
     getAllUsers: [User]
-    getUserById(UserId: ID!): User
+    getUserById(id: String!): User
 }
 
 type Mutation {
     createNewUser(createUserDto: CreateUserDto) : User
-    updateUserById(id: ID!, updateUserDto: UpdateUserDto!) : User!
-    deleteUserById(id:ID!) : Boolean
+    updateUserById(id: String!, updateUserDto: UpdateUserDto!) : User!
+    deleteUserById(id:String!) : Boolean
 }
 ```
 

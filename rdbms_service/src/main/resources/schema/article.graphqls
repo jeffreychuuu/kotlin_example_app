@@ -19,11 +19,11 @@ input UpdateArticleDto {
 
 type Query {
     getAllArticles: [Article]
-    getArticleById(articleId: ID!): Article
+    getArticleById(id: Int!): Article
 }
 
 type Mutation {
     createNewArticle(createArticleDto: CreateArticleDto!) : Article!
-    UpdateArticleDtoById(id: ID!, updateArticleDto: UpdateArticleDto!) : Article!
-    deleteArticleById(id:ID!) : Boolean
+    UpdateArticleDtoById(id: Int!, updateArticleDto: UpdateArticleDto!) : Article!
+    deleteArticleById(id:Int!) : Boolean
 }

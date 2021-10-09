@@ -24,11 +24,11 @@ input UpdateUserDto {
 
 type Query {
     getAllUsers: [User]
-    getUserById(UserId: ID!): User
+    getUserById(id: String!): User
 }
 
 type Mutation {
     createNewUser(createUserDto: CreateUserDto) : User
-    updateUserById(id: ID!, updateUserDto: UpdateUserDto!) : User!
-    deleteUserById(id:ID!) : Boolean
+    updateUserById(id: String!, updateUserDto: UpdateUserDto!) : User!
+    deleteUserById(id:String!) : Boolean
 }
