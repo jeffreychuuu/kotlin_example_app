@@ -372,7 +372,11 @@ const server = new ApolloServer({ gateway, subscriptions:false, tracing:true });
 server.listen();
 ```
 
+Visit the Graphql Playground by
 
+```
+http://localhost:4000
+```
 
 ## Adding Spring Data Support
 
