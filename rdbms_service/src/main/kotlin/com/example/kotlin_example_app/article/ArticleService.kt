@@ -45,26 +45,26 @@ class ArticleService(private val articleRepository: ArticleRepository, private v
     }
 
 
-    fun findById(articleId: Long): ArticleEntity? {
-        var redisResult = redisUtil.hget(key, articleId.toString())
+    fun findById(id: Long): ArticleEntity? {
+        var redisResult = redisUtil.hget(key, id.toString())
         return if (redisResult != null) {
             val result = mapper.readValue(redisResult.toString(), ArticleEntity::class.java)
             result
         } else
-            articleRepository.findById(articleId).map { result ->
-                redisUtil.hset(key, articleId.toString(), mapper.writeValueAsString(result), ttl)
+            articleRepository.findById(id).map { result ->
+                redisUtil.hset(key, id.toString(), mapper.writeValueAsString(result), ttl)
                 result
             }.orElse(null)
     }
 
     fun update(
-        articleId: Long,
+        id: Long,
         @Valid updateArticleDto: UpdateArticleDto
     ): ArticleEntity? {
         if (updateArticleDto.authorId != null)
             updateArticleDto.authorId?.let { mongoService.findById(it) } ?: return null
-        redisUtil.hdel(key, articleId.toString())
-        return articleRepository.findById(articleId).map { existingArticle ->
+        redisUtil.hdel(key, id.toString())
+        return articleRepository.findById(id).map { existingArticle ->
             val updatedArticle: ArticleEntity = existingArticle
                 .copy(
                     title = if (updateArticleDto?.title != null) updateArticleDto.title else existingArticle.title,
@@ -75,9 +75,9 @@ class ArticleService(private val articleRepository: ArticleRepository, private v
         }.orElse(null)
     }
 
-    fun delete(articleId: Long): Boolean {
-        redisUtil.hdel(key, articleId.toString())
-        return articleRepository.findById(articleId).map { article ->
+    fun delete(id: Long): Boolean {
+        redisUtil.hdel(key, id.toString())
+        return articleRepository.findById(id).map { article ->
             articleRepository.delete(article)
             true
         }.orElse(false)

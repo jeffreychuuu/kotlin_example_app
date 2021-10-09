@@ -1,17 +1,17 @@
-type Article {
+type Article @key(fields: "authorId"){
     id: ID!
     title: String!
     content: String!
     authorId: String!
 }
 
-input CreateArticle {
+input CreateArticleDto {
     title: String!
     content: String!
     authorId: String!
 }
 
-input UpdateArticle {
+input UpdateArticleDto {
     title: String
     content: String
     authorId: String
@@ -23,7 +23,7 @@ type Query {
 }
 
 type Mutation {
-    createNewArticle(articleInput: CreateArticle!) : Article!
-    updateArticleById(id: ID!, articleInput: UpdateArticle!) : Article!
+    createNewArticle(createArticleDto: CreateArticleDto!) : Article!
+    UpdateArticleDtoById(id: ID!, updateArticleDto: UpdateArticleDto!) : Article!
     deleteArticleById(id:ID!) : Boolean
 }

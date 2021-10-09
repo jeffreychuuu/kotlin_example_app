@@ -1,7 +1,12 @@
 package com.example.kotlin_example_app.article.dto
 
-class UpdateArticleDto {
-    val title: String? = null
-    val content: String? = null
-    val authorId: String? = null
-}
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class UpdateArticleDto(
+    @JsonProperty("title")
+    val title: String?,
+    @JsonProperty("content")
+    val content: String?,
+    @JsonProperty("authorId")
+    val authorId: String?
+)

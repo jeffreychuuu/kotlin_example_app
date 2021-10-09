@@ -1,3 +1,8 @@
+type Article @key(fields: "authorId") @extends {
+    authorId: String! @external
+    author: User
+}
+
 type User {
     id: ID!
     name: String!
@@ -5,13 +10,13 @@ type User {
     gender: String!
 }
 
-input CreateUser {
+input CreateUserDto {
     name: String!
     age: Int!
     gender: String!
 }
 
-input UpdateUser {
+input UpdateUserDto {
     name: String
     age: Int
     gender: String
@@ -23,7 +28,7 @@ type Query {
 }
 
 type Mutation {
-    createNewUser(UserInput: CreateUser!) : User!
-    updateUserById(id: ID!, UserInput: UpdateUser!) : User!
+    createNewUser(createUserDto: CreateUserDto) : User
+    updateUserById(id: ID!, updateUserDto: UpdateUserDto!) : User!
     deleteUserById(id:ID!) : Boolean
 }

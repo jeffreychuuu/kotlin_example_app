@@ -1,7 +1,12 @@
 package com.example.mongo_service.user.dto
 
-class UpdateUserDto {
-    val name: String? = null
-    val age: Int? = null
-    val gender: String? = null
-}
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class UpdateUserDto(
+    @JsonProperty("name")
+    val name: String?,
+    @JsonProperty("age")
+    val age: Int?,
+    @JsonProperty("gender")
+    val gender: String?
+)

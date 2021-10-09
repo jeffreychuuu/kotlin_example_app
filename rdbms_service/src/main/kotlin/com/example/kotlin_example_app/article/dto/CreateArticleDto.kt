@@ -1,7 +1,12 @@
 package com.example.kotlin_example_app.article.dto
 
-class CreateArticleDto {
-    val title: String = ""
-    val content: String = ""
-    val authorId: String = ""
-}
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class CreateArticleDto(
+    @JsonProperty("title")
+    val title: String,
+    @JsonProperty("content")
+    val content: String,
+    @JsonProperty("authorId")
+    val authorId: String
+)

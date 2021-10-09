@@ -19,17 +19,12 @@ grpc:
     port: 9090
 
 # Graphql
-graphql:
-  servlet:
-    # Sets if GraphQL servlet should be created and exposed. If not specified defaults to "true".
-    enabled: true
-    # Sets the path where GraphQL servlet will be exposed. If not specified defaults to "/graphql"
-    mapping: /graphql
-    cors-enabled: true
-  playground:
-    enabled: true
-    mapping: /playground
-    endpoint: /graphql
+dgs:
+  graphql:
+    path: /graphql
+    graphiql:
+      enabled: true
+      path: /graphiql
 
 ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
 spring:

@@ -40,24 +40,24 @@ class UserService(private val userRepository: UserRepository) {
         return result
     }
 
-    fun findById(userId: String): ResponseEntity<UserDocument> {
-        var redisResult = redisUtil.hget(key, userId)
+    fun findById(id: String): ResponseEntity<UserDocument> {
+        var redisResult = redisUtil.hget(key, id)
         if (redisResult != null) {
             val result = mapper.readValue(redisResult.toString(), UserDocument::class.java)
             return ResponseEntity.ok(result)
         } else
-            return userRepository.findById(userId).map { result ->
-                redisUtil.hset(key, userId, mapper.writeValueAsString(result), ttl)
+            return userRepository.findById(id).map { result ->
+                redisUtil.hset(key, id, mapper.writeValueAsString(result), ttl)
                 ResponseEntity.ok(result)
             }.orElse(ResponseEntity.notFound().build())
     }
 
     fun update(
-        userId: String,
+        id: String,
         @Valid updateUserDto: UpdateUserDto
     ): ResponseEntity<UserDocument> {
-        redisUtil.hdel(key, userId)
-        return userRepository.findById(userId).map { existingArticle ->
+        redisUtil.hdel(key, id)
+        return userRepository.findById(id).map { existingArticle ->
             val updatedUser: UserDocument = existingArticle
                 .copy(
                     name = if (updateUserDto?.name != null) updateUserDto.name else existingArticle.name,
@@ -69,9 +69,9 @@ class UserService(private val userRepository: UserRepository) {
         }.orElse(ResponseEntity.notFound().build())
     }
 
-    fun delete(userId: String): ResponseEntity<Void> {
-        redisUtil.hdel(key, userId)
-        return userRepository.findById(userId).map { article ->
+    fun delete(id: String): ResponseEntity<Void> {
+        redisUtil.hdel(key, id)
+        return userRepository.findById(id).map { article ->
             userRepository.delete(article)
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())
