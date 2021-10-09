@@ -1,9 +1,9 @@
 package com.example.mongo_service.user
 
-import com.example.mongo_service.generated.types.Article
 import com.example.mongo_service.user.documents.UserDocument
 import com.example.mongo_service.user.dto.CreateUserDto
 import com.example.mongo_service.user.dto.UpdateUserDto
+import com.example.netflix_dgs.generated.types.Article
 import com.netflix.graphql.dgs.*
 
 

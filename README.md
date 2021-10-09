@@ -21,6 +21,7 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding Rest Controller](#Adding-Rest-Controller)
 - [Adding SpringDoc OpenAPI3 Support](#Adding-SpringDoc-OpenAPI3-Support)
 - [Adding Graphql Support](#Adding-Graphql-Support)
+  - [Adding Graphql Federation Support](#Adding-Graphql-Federation-Support)
 - [Adding Spring Data Support](#Adding-Spring-Data-Support)
 - [Adding Redis Support](#Adding-Redis-Support)
 - [Adding gRPC Support](#Adding-gRPC-Support)
@@ -106,48 +107,64 @@ http://localhost:8080/api-docs
 
 ## Adding Graphql Support
 
-Add the package to `build.gradle.kts` 
+Add the [package](https://netflix.github.io/dgs/) to `build.gradle.kts` 
 
 ```yaml
-implementation("com.graphql-java-kickstart:graphql-spring-boot-starter:12.0.0")
+implementation("com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter:4.9.0")
+```
+
+To use DGS Code Generation, you may need to add the codegen plugin into `build.gradle.kts` 
+
+```kotlin
+plugins {
+    id("com.netflix.dgs.codegen") version "5.1.2"
+}
+
+@OptIn(kotlin.ExperimentalStdlibApi::class)
+tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {
+    generateClient = true
+    packageName = "com.example.netflix_dgs.generated"
+}
+```
+
+Generating the code by running and the code will be generated in `build` folder
+
+```
+./gradlew generate
 ```
 
 Add the basic graphql config to `application.yml`
 
-Advance setting for this package please view [here](https://github.com/graphql-java-kickstart/graphql-spring-boot)
-
 ```yaml
 # Graphql
-graphql:
-  servlet:
-    # Sets if GraphQL servlet should be created and exposed. If not specified defaults to "true".
-    enabled: true
-    # Sets the path where GraphQL servlet will be exposed. If not specified defaults to "/graphql"
-    mapping: /graphql
-    cors-enabled: true
-  playground:
-    enabled: true
-    mapping: /playground
-    endpoint: /graphql
+dgs:
+  graphql:
+    path: /graphql
+    graphiql:
+      enabled: true
+      path: /graphiql
 ```
 
-Define the graphql schema and place it into `/src/main/resources/graphql` as `xxx.graphqls`
+Define the graphql schema and place it into `/src/main/resources/schema` as `xxx.graphqls`
 
 ```
 type Article {
     id: ID!
     title: String!
     content: String!
+    authorId: String!
 }
 
-input CreateArticle {
+input CreateArticleDto {
     title: String!
     content: String!
+    authorId: String!
 }
 
-input UpdateArticle {
+input UpdateArticleDto {
     title: String
     content: String
+    authorId: String
 }
 
 type Query {
@@ -156,52 +173,53 @@ type Query {
 }
 
 type Mutation {
-    createNewArticle(articleInput: CreateArticle!) : Article!
-    updateArticleById(id: ID!, articleInput: UpdateArticle!) : Article!
+    createNewArticle(createArticleDto: CreateArticleDto!) : Article!
+    UpdateArticleDtoById(id: ID!, updateArticleDto: UpdateArticleDto!) : Article!
     deleteArticleById(id:ID!) : Boolean
 }
 ```
 
-Add the Graphql Query Resolver
+Add the Graphql Fetcher
+
+**Please be aware that the naming of the `@InputArgument` must be same as that in the graphql schema**  
 
 ```kotlin
-@Component
-class ArticleQueryResolver(private val articleService: ArticleService) : GraphQLQueryResolver {
+@DgsComponent
+class ArticleFetcher(private val articleService: ArticleService) {
+
+    @DgsQuery
     fun getAllArticles(): List<ArticleEntity> =
         articleService.findAll()
 
-    fun getArticleById(articleId: Long): ArticleEntity? =
-        articleService.findById(articleId).body
-}
-```
+    @DgsQuery
+    fun getArticleById(@InputArgument id: Long): ArticleEntity? {
+        return articleService.findById(id) ?: throw RuntimeException("Article Id does not existed")
+    }
 
-Add the Graphql Mutation Resolver
-
-```kotlin
-@Component
-class ArticleMutationResolver(private val articleService: ArticleService) : GraphQLMutationResolver {
-    fun createNewArticle(@Valid createArticleDto: CreateArticleDto): ArticleEntity =
-        articleService.save(createArticleDto)
-
-    fun updateArticleById(articleId: Long, @Valid updateArticleDto: UpdateArticleDto): ArticleEntity? =
-        articleService.update(articleId, updateArticleDto).body
-
-    fun deleteArticleById(articleId: Long): Boolean {
-        return try {
-            articleService.delete(articleId)
-            true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
+    @DgsMutation
+    fun createNewArticle(@InputArgument createArticleDto: CreateArticleDto): ArticleEntity? {
+        return articleService.save(createArticleDto) ?: throw RuntimeException("Author Id does not existed")
     }
 }
 ```
 
-Visit the Graphql Playground by
+**Also, the object of `@InputArgument` must be decalred as `data` with proper `@JsonProperty`** , like
+
+```kotlin
+data class CreateArticleDto(
+    @JsonProperty("title")
+    val title: String,
+    @JsonProperty("content")
+    val content: String,
+    @JsonProperty("authorId")
+    val authorId: String
+)
+```
+
+Visit the Graphical by
 
 ```
-http://localhost:8080/playground
+http://localhost:8080/graphiql
 ```
 
 Calling the grpahql api by
@@ -209,6 +227,152 @@ Calling the grpahql api by
 ```
 http://localhost:8080/graphql
 ```
+
+### Adding Graphql Federation Support
+
+You have to have at least two services
+
+#### RDBMS Service (Article Service)
+
+Define the new grapnel schema with declaring a field as `@key` that will be referenced by other services
+
+Here the field `authorId` will be referenced by other service to fetch the related object
+
+```
+type Article @key(fields: "authorId"){
+    id: ID!
+    title: String!
+    content: String!
+    authorId: String!
+}
+
+input CreateArticleDto {
+    title: String!
+    content: String!
+    authorId: String!
+}
+
+input UpdateArticleDto {
+    title: String
+    content: String
+    authorId: String
+}
+
+type Query {
+    getAllArticles: [Article]
+    getArticleById(articleId: ID!): Article
+}
+
+type Mutation {
+    createNewArticle(createArticleDto: CreateArticleDto!) : Article!
+    UpdateArticleDtoById(id: ID!, updateArticleDto: UpdateArticleDto!) : Article!
+    deleteArticleById(id:ID!) : Boolean
+}
+```
+
+#### Mongo Service (User Service)
+
+Define the new grapnel schema with declaring the external referenced type with `@extends` and defining its `@key` and the external field with `@external`
+
+```
+type Article @key(fields: "authorId") @extends {
+    authorId: String! @external
+    author: User
+}
+
+type User {
+    id: ID!
+    name: String!
+    age: Int!
+    gender: String!
+}
+
+input CreateUserDto {
+    name: String!
+    age: Int!
+    gender: String!
+}
+
+input UpdateUserDto {
+    name: String
+    age: Int
+    gender: String
+}
+
+type Query {
+    getAllUsers: [User]
+    getUserById(UserId: ID!): User
+}
+
+type Mutation {
+    createNewUser(createUserDto: CreateUserDto) : User
+    updateUserById(id: ID!, updateUserDto: UpdateUserDto!) : User!
+    deleteUserById(id:ID!) : Boolean
+}
+```
+
+Defining the `@DgsEntityFetcher` and the `@DgsData`
+
+```kotlin
+@DgsComponent
+class UserFetcher(private val userService: UserService) {
+    @DgsEntityFetcher(name = "Article")
+    fun article(values: Map<String?, Any?>): Article? {
+        return (values["authorId"] as String?)?.let { Article(it, null) }
+    }
+
+    @DgsData(parentType = "Article", field = "author")
+    fun authorsFetcher(dataFetchingEnvironment: DgsDataFetchingEnvironment): UserDocument? {
+        val article: Article = dataFetchingEnvironment.getSource()
+        return userService.findById(article.authorId).body
+    }
+}
+```
+
+#### Apollo Gateway
+
+Add the package to `package.json` 
+
+```json
+{
+  "name": "apollo-gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":" node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/gateway": "^0.21.4",
+    "apollo-server": "^2.19.0",
+    "graphql": "^15.4.0"
+  }
+}
+
+```
+
+Deine the Apollo-gateway that developed by Nodejs and defining the endpoint of graphs in `index.js`
+
+```javascript
+const { ApolloServer, gql } = require('apollo-server');
+const {ApolloGateway} = require('@apollo/gateway')
+
+const gateway = new ApolloGateway({
+    serviceList: [
+        { name: 'rdbms_service', url: 'http://localhost:8080/graphql' },
+        { name: 'mongo_service', url: 'http://localhost:8081/graphql' },
+    ]
+});
+
+const server = new ApolloServer({ gateway, subscriptions:false, tracing:true });
+server.listen();
+```
+
+
 
 ## Adding Spring Data Support
 
