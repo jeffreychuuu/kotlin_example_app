@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.google.protobuf.gradle.*
 
 plugins {
     id("org.springframework.boot") version "2.4.11"
@@ -6,6 +7,7 @@ plugins {
     kotlin("jvm") version "1.4.32"
     kotlin("plugin.spring") version "1.4.32"
     id("com.netflix.dgs.codegen") version "5.1.2"
+    id("com.google.protobuf") version "0.8.13"
 }
 
 group = "com.example"
@@ -14,6 +16,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
@@ -28,6 +31,34 @@ dependencies {
     implementation("com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter:4.9.0")
     implementation("org.springframework.kafka:spring-kafka:2.7.7")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    api("io.grpc:grpc-kotlin-stub:0.2.1")
+    implementation("net.devh:grpc-spring-boot-starter:2.12.0.RELEASE")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.10.0:osx-x86_64"
+    }
+
+    plugins {
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.25.0:osx-x86_64"
+        }
+        id("grpckt") {
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.1.0:jdk7@jar" // you need to mention :osx-x86_64 behind if you are using m1 mac
+        }
+    }
+
+    generateProtoTasks {
+        ofSourceSet("main").forEach { generateProtoTask ->
+            generateProtoTask
+                .plugins {
+                    id("grpc")
+                    id("grpckt")
+                }
+        }
+    }
 }
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)

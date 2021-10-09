@@ -43,7 +43,7 @@ dependencies {
     implementation("com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter:4.9.0")
 //    implementation(project(":grpc_lib"))
     api("io.grpc:grpc-kotlin-stub:0.2.1")
-    implementation("net.devh:grpc-server-spring-boot-starter:2.12.0.RELEASE")
+    implementation("net.devh:grpc-spring-boot-starter:2.12.0.RELEASE")
 }
 
 protobuf {

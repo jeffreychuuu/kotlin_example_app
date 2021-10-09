@@ -1,8 +1,10 @@
 package com.example.mongo_service.user
 
+import com.example.mongo_service.ArticleList
+import com.example.mongo_service.ExternalService
+import com.example.mongo_service.user.documents.UserDocument
 import com.example.mongo_service.user.dto.CreateUserDto
 import com.example.mongo_service.user.dto.UpdateUserDto
-import com.example.mongo_service.user.documents.UserDocument
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -11,7 +13,11 @@ import javax.validation.Valid
 @Tag(name = "UserRestController")
 @RestController
 @RequestMapping("/api")
-class UserRestController(private val userService: UserService) {
+class UserRestController(private val userService: UserService, private val externalService: ExternalService) {
+    @GetMapping("/externals")
+    suspend fun getALlExternals(): ArticleList =
+        externalService.getAllArticles()
+
     @GetMapping("/users")
     fun getAllArticles(): List<UserDocument> =
         userService.findAll()
