@@ -25,6 +25,8 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding Spring Data Support](#Adding-Spring-Data-Support)
 - [Adding Redis Support](#Adding-Redis-Support)
 - [Adding gRPC Support](#Adding-gRPC-Support)
+  - [For Grpc Server](For-Grpc-Server)
+  - [For Grpc Client](For Grpc Client)
 - [Adding MongoDB Support](#Adding-MongoDB-Support)
 - [Adding Retrofit Support](#Adding-Retrofit-Support)
 - [Adding Kafka Support](#Adding-Kafka-Support)
@@ -1113,128 +1115,44 @@ class ArticleService(private val articleRepository: ArticleRepository) {
 
 ## Adding gRPC Support
 
-- Keep looking at the update of [grpc/grpc-kotlin (github.com)](https://github.com/grpc/grpc-kotlin)
+Add the required plugin and dependencies to `build.gradle.kts` 
 
-  - [protoc-gen-grpc-kotlin](https://github.com/grpc/grpc-kotlin/blob/master/compiler): A [protoc](https://github.com/protocolbuffers/protobuf#protocol-compiler-installation) plugin for generating Kotlin gRPC client-stub and server plumbing code.
+```yaml
+import com.google.protobuf.gradle.*
 
-    > **Note:** The Kotlin protoc plugin uses the [Java protoc plugin](https://github.com/grpc/grpc-java/tree/master/compiler) behind the scenes to **generate \*message types\* as \*Java classes\***. Generation of Kotlin sources for proto messages is being discussed in [protocolbuffers/protobuf#3742](https://github.com/protocolbuffers/protobuf/issues/3742).
-
-  - [grpc-kotlin-stub](https://github.com/grpc/grpc-kotlin/blob/master/stub): A Kotlin implementation of gRPC, providing runtime support for client-stubs and server-side code.
-
-Create a new project for grc_lib
-
-Define the `build.gradle.kts`
-
-- `kotlin("jvm") version "1.4.10" // remove the version tag if you are build by other project`
-- `you need to mention :osx-x86_64 behind if you are using m1 mac on protobug plugin`
-
-```
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import com.google.protobuf.gradle.*;
-buildscript {
-	dependencies {
-		classpath("com.google.protobuf:protobuf-gradle-plugin:0.8.13")
-	}
-}
 plugins {
-	id("com.google.protobuf") version "0.8.13"
-	kotlin("jvm") version "1.4.10" // remove the version tag if you are build by other project
+    id("com.google.protobuf") version "0.8.13"
 }
-
-group = "com.kotlingrpc"
-version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
-
-allprojects {
-	repositories {
-		mavenLocal()
-		mavenCentral()
-		google()
-	}
-}
-
 
 dependencies {
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("io.grpc:grpc-protobuf:1.33.1")
-	implementation("io.grpc:grpc-stub:1.33.1")
-	implementation("io.grpc:grpc-netty:1.33.1")
-	compileOnly("javax.annotation:javax.annotation-api:1.3.2")
-	api("com.google.protobuf:protobuf-java-util:3.13.0")
-	implementation("io.grpc:grpc-all:1.33.1")
-	api("io.grpc:grpc-kotlin-stub:0.2.1")
-	implementation("io.grpc:protoc-gen-grpc-kotlin:0.1.5")
-	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
-	implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.13")
-	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-}
-
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "11"
-	}
+    api("io.grpc:grpc-kotlin-stub:0.2.1")
+    implementation("net.devh:grpc-server-spring-boot-starter:2.12.0.RELEASE")
 }
 
 protobuf {
-	protoc{
-		artifact = "com.google.protobuf:protoc:3.10.1" // you need to mention :osx-x86_64 behind if you are using m1 mac
-	}
-	generatedFilesBaseDir = "$projectDir/src/main/grpc/com.kotlingrpc/generated"
-	plugins {
-		id("grpc"){
-			artifact = "io.grpc:protoc-gen-grpc-java:1.33.1" // you need to mention :osx-x86_64 behind if you are using m1 mac
-		}
-		id("grpckt") {
-			artifact = "io.grpc:protoc-gen-grpc-kotlin:0.1.5" // you need to mention :osx-x86_64 behind if you are using m1 mac
-		}
-	}
-	generateProtoTasks {
-		all().forEach {
-			it.plugins {
-				id("grpc")
-				id("grpckt")
-			}
-		}
-	}
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.10.0:osx-x86_64" // you need to mention :osx-x86_64 behind if you are using m1 mac
+    }
+
+    plugins {
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.25.0:osx-x86_64" // you need to mention :osx-x86_64 behind if you are using m1 mac
+        }
+        id("grpckt") {
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.1.0:jdk7@jar"
+        }
+    }
+
+    generateProtoTasks {
+        ofSourceSet("main").forEach { generateProtoTask ->
+            generateProtoTask
+                .plugins {
+                    id("grpc")
+                    id("grpckt")
+                }
+        }
+    }
 }
-```
-
-Create a proto
-
-```proto
-syntax = "proto3";
-package com.kotlingrpc.demoGrpc;
-
-option java_multiple_files = true;
-option java_package = "com.kotlingrpc.demoGrpc";
-option java_outer_classname = "HelloWorldProto";
-
-// The greeting service definition.
-service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
-}
-
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
-}
-
-// The response message containing the greetings
-message HelloReply {
-  string message = 1;
-}
-```
-
-Run gradlew build, then the generated files would be built on the `generatedFilesBaseDir` you define on `build.gradle.kts`
-
-Move back to project for rdbms_service
-
-Add the related library
-
-```
-implementation("net.devh:grpc-server-spring-boot-starter:2.12.0.RELEASE")
 ```
 
 Add grpc config to `application.yml`
@@ -1245,34 +1163,65 @@ grpc:
     port: 9090
 ```
 
-Edit the `setting.gradle.tks` by add the `grpc_lib` project
+Create a proto in `src/main/proto`
 
-```kotlin
-include(":grpc_lib")
-project(":grpc_lib").projectDir = file("../grpc_lib")
-```
+```proto
+syntax = "proto3";
 
-Edit the `build.gradle.tks` by add the `grpc_lib` project
+import "google/protobuf/empty.proto";
 
-```kotlin
-dependencies {
-    implementation(project(":grpc_lib"))
+option java_multiple_files = true;
+
+package com.example.kotlin_example_app;
+
+service ArticleService {
+  rpc FindAllArticles (google.protobuf.Empty) returns (ArticleList);
+}
+
+message ArticleList {
+  repeated Article articles = 1;
+}
+
+message Article {
+  int64 id = 1;
+  string title = 2;
+  string content = 3;
+  string authorId = 4;
 }
 ```
 
-Then create the `GrpcController` using java class
+Generate the `stub` and `message` based on the proto file by
 
-```java
+```
+./gradlew generateProto
+```
+
+### For Grpc Server
+
+Add a GrpcService
+
+```kotlin
 @GrpcService
-public class GrpcServerService extends GreeterGrpc.GreeterImplBase {
-    @Override
-    public void sayHello(HelloRequest req, StreamObserver<HelloReply> responseObserver) {
-        HelloReply reply = HelloReply.newBuilder().setMessage("Hello ==> " + req.getName()).build();
-        responseObserver.onNext(reply);
-        responseObserver.onCompleted();
+class ArticleGrpcService(private val articleService: ArticleService) : ArticleServiceGrpcKt.ArticleServiceCoroutineImplBase() {
+    override suspend fun findAllArticles(request: Empty): ArticleList {
+        var articles: List<ArticleEntity> =  articleService.findAll()
+
+        var articleList : ArrayList<Article> = ArrayList<Article>()
+        for (article: ArticleEntity in articles) {
+            var article : Article = Article.newBuilder()
+                .setId(article.id)
+                .setTitle(article.title)
+                .setContent(article.content)
+                .setAuthorId(article.authorId)
+                .build()
+            articleList.add(article)
+        }
+        return ArticleList.newBuilder().addAllArticles(articleList).build()
     }
 }
 ```
+
+### For Grpc Client
 
 ## Adding MongoDB Support
 
