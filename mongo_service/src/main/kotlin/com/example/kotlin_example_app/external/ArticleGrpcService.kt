@@ -1,7 +1,7 @@
 package com.example.kotlin_example_app.external
 
-import com.example.kotlin_example_app.ArticleList
-import com.example.kotlin_example_app.ArticleServiceGrpcKt
+import com.common.grpc_lib.ArticleServiceGrpcKt
+import com.common.grpc_lib.ArticleList
 import com.google.protobuf.Empty
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
