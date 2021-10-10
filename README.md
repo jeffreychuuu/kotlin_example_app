@@ -25,6 +25,7 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding Spring Data Support](#Adding-Spring-Data-Support)
 - [Adding Redis Support](#Adding-Redis-Support)
 - [Adding gRPC Support](#Adding-gRPC-Support)
+  - [For Grpc Lib](For-Grpc-Lib)
   - [For Grpc Server](For-Grpc-Server)
   - [For Grpc Client](For Grpc Client)
 - [Adding MongoDB Support](#Adding-MongoDB-Support)
@@ -1115,43 +1116,78 @@ class ArticleService(private val articleRepository: ArticleRepository) {
 
 ## Adding gRPC Support
 
+### For Grpc Lib
+
 Add the required plugin and dependencies to `build.gradle.kts` 
 
-```yaml
-import com.google.protobuf.gradle.*
+```kotlin
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.google.protobuf.gradle.*;
 
-plugins {
-    id("com.google.protobuf") version "0.8.13"
+buildscript {
+	dependencies {
+		classpath("com.google.protobuf:protobuf-gradle-plugin:0.8.13")
+	}
 }
 
+plugins {
+	id("com.google.protobuf") version "0.8.13"
+//	kotlin("jvm") version "1.4.32" // remove the version tag if you are build by other project
+	kotlin("jvm")
+}
+
+group = "com.kotlingrpc"
+version = "0.0.1-SNAPSHOT"
+java.sourceCompatibility = JavaVersion.VERSION_11
+
+allprojects {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		google()
+	}
+}
+
+
 dependencies {
-    api("io.grpc:grpc-kotlin-stub:0.2.1")
-    implementation("net.devh:grpc-spring-boot-starter:2.12.0.RELEASE")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	compileOnly("javax.annotation:javax.annotation-api:1.3.2")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	// gRPC
+	api("io.grpc:grpc-kotlin-stub:0.2.1")
+	implementation("io.grpc:protoc-gen-grpc-kotlin:1.1.0")
+}
+
+tasks.withType<KotlinCompile> {
+	kotlinOptions {
+		freeCompilerArgs = listOf("-Xjsr305=strict")
+		jvmTarget = "11"
+	}
 }
 
 protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.10.0:osx-x86_64" // you need to mention :osx-x86_64 behind if you are using m1 mac
-    }
-
-    plugins {
-        id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.25.0:osx-x86_64" // you need to mention :osx-x86_64 behind if you are using m1 mac
-        }
-        id("grpckt") {
-            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.1.0:jdk7@jar"
-        }
-    }
-
-    generateProtoTasks {
-        ofSourceSet("main").forEach { generateProtoTask ->
-            generateProtoTask
-                .plugins {
-                    id("grpc")
-                    id("grpckt")
-                }
-        }
-    }
+	protoc{
+		artifact = "com.google.protobuf:protoc:3.14.0:osx-x86_64" // you need to mention :osx-x86_64 behind if you are using m1 mac
+	}
+	generatedFilesBaseDir = "$projectDir/src/main/kotlin/generated"
+	plugins {
+		id("grpc"){
+			artifact = "io.grpc:protoc-gen-grpc-java:1.36.0:osx-x86_64" // you need to mention :osx-x86_64 behind if you are using m1 mac
+		}
+		id("grpckt") {
+			artifact = "io.grpc:protoc-gen-grpc-kotlin:1.1.0:jdk7@jar"
+		}
+	}
+	generateProtoTasks {
+		ofSourceSet("main").forEach { generateProtoTask ->
+			generateProtoTask
+				.plugins {
+					id("grpc")
+					id("grpckt")
+				}
+		}
+	}
 }
 ```
 
@@ -1190,6 +1226,16 @@ Generate the `stub` and `message` based on the proto file by
 
 ### For Grpc Server
 
+Add the required plugin and dependencies to `build.gradle.kts` 
+
+```kotlin
+dependencies {
+    // gRPC
+    implementation(project(":grpc_lib"))
+    implementation("net.devh:grpc-spring-boot-starter:2.12.0.RELEASE")
+}
+```
+
 Add grpc config to `application.yml`
 
 ```yaml
@@ -1223,6 +1269,17 @@ class ArticleGrpcService(private val articleService: ArticleService) : ArticleSe
 
 ### For Grpc Client
 
+Add the required plugin and dependencies to `build.gradle.kts` 
+
+```kotlin
+dependencies {
+    // gRPC
+    implementation(project(":grpc_lib"))
+    implementation("net.devh:grpc-spring-boot-starter:2.12.0.RELEASE")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+}
+```
+
 Add grpc config to `application.yml`
 
 ```yaml
@@ -1240,7 +1297,7 @@ Define an External Service that connect to other gRPC server
 ```kotlin
 @Service
 class ExternalService {
-    @GrpcClient("articleGrpcServer") // same name as that in aqpplication.yml
+    @GrpcClient("articleGrpcServer") // same name as that in application.yml
     private val articleServiceStub: ArticleServiceGrpcKt.ArticleServiceCoroutineStub? = null
 
     fun getAllArticlesCount(): Int {

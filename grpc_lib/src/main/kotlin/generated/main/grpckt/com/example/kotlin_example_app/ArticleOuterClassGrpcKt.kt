@@ -1,6 +1,7 @@
-package demo
+package com.example.kotlin_example_app
 
-import demo.GreeterGrpc.getServiceDescriptor
+import com.example.kotlin_example_app.ArticleServiceGrpc.getServiceDescriptor
+import com.google.protobuf.Empty
 import io.grpc.CallOptions
 import io.grpc.CallOptions.DEFAULT
 import io.grpc.Channel
@@ -23,29 +24,31 @@ import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 /**
- * Holder for Kotlin coroutine-based client and server APIs for demo.Greeter.
+ * Holder for Kotlin coroutine-based client and server APIs for
+ * com.example.kotlin_example_app.ArticleService.
  */
-object GreeterGrpcKt {
-  const val SERVICE_NAME: String = GreeterGrpc.SERVICE_NAME
+object ArticleServiceGrpcKt {
+  const val SERVICE_NAME: String = ArticleServiceGrpc.SERVICE_NAME
 
   @JvmStatic
   val serviceDescriptor: ServiceDescriptor
-    get() = GreeterGrpc.getServiceDescriptor()
+    get() = ArticleServiceGrpc.getServiceDescriptor()
 
-  val sayHelloMethod: MethodDescriptor<HelloRequest, HelloReply>
+  val findAllArticlesMethod: MethodDescriptor<Empty, ArticleList>
     @JvmStatic
-    get() = GreeterGrpc.getSayHelloMethod()
+    get() = ArticleServiceGrpc.getFindAllArticlesMethod()
 
   /**
-   * A stub for issuing RPCs to a(n) demo.Greeter service as suspending coroutines.
+   * A stub for issuing RPCs to a(n) com.example.kotlin_example_app.ArticleService service as
+   * suspending coroutines.
    */
-  @StubFor(GreeterGrpc::class)
-  class GreeterCoroutineStub @JvmOverloads constructor(
+  @StubFor(ArticleServiceGrpc::class)
+  class ArticleServiceCoroutineStub @JvmOverloads constructor(
     channel: Channel,
     callOptions: CallOptions = DEFAULT
-  ) : AbstractCoroutineStub<GreeterCoroutineStub>(channel, callOptions) {
-    override fun build(channel: Channel, callOptions: CallOptions): GreeterCoroutineStub =
-        GreeterCoroutineStub(channel, callOptions)
+  ) : AbstractCoroutineStub<ArticleServiceCoroutineStub>(channel, callOptions) {
+    override fun build(channel: Channel, callOptions: CallOptions): ArticleServiceCoroutineStub =
+        ArticleServiceCoroutineStub(channel, callOptions)
 
     /**
      * Executes this RPC and returns the response message, suspending until the RPC completes
@@ -58,22 +61,24 @@ object GreeterGrpcKt {
      *
      * @return The single response from the server.
      */
-    suspend fun sayHello(request: HelloRequest): HelloReply = unaryRpc(
+    suspend fun findAllArticles(request: Empty): ArticleList = unaryRpc(
       channel,
-      GreeterGrpc.getSayHelloMethod(),
+      ArticleServiceGrpc.getFindAllArticlesMethod(),
       request,
       callOptions,
       Metadata()
     )}
 
   /**
-   * Skeletal implementation of the demo.Greeter service based on Kotlin coroutines.
+   * Skeletal implementation of the com.example.kotlin_example_app.ArticleService service based on
+   * Kotlin coroutines.
    */
-  abstract class GreeterCoroutineImplBase(
+  abstract class ArticleServiceCoroutineImplBase(
     coroutineContext: CoroutineContext = EmptyCoroutineContext
   ) : AbstractCoroutineServerImpl(coroutineContext) {
     /**
-     * Returns the response to an RPC for demo.Greeter.SayHello.
+     * Returns the response to an RPC for
+     * com.example.kotlin_example_app.ArticleService.FindAllArticles.
      *
      * If this method fails with a [StatusException], the RPC will fail with the corresponding
      * [io.grpc.Status].  If this method fails with a [java.util.concurrent.CancellationException],
@@ -83,14 +88,14 @@ object GreeterGrpcKt {
      *
      * @param request The request from the client.
      */
-    open suspend fun sayHello(request: HelloRequest): HelloReply = throw
-        StatusException(UNIMPLEMENTED.withDescription("Method demo.Greeter.SayHello is unimplemented"))
+    open suspend fun findAllArticles(request: Empty): ArticleList = throw
+        StatusException(UNIMPLEMENTED.withDescription("Method com.example.kotlin_example_app.ArticleService.FindAllArticles is unimplemented"))
 
     final override fun bindService(): ServerServiceDefinition = builder(getServiceDescriptor())
       .addMethod(unaryServerMethodDefinition(
       context = this.context,
-      descriptor = GreeterGrpc.getSayHelloMethod(),
-      implementation = ::sayHello
+      descriptor = ArticleServiceGrpc.getFindAllArticlesMethod(),
+      implementation = ::findAllArticles
     )).build()
   }
 }
