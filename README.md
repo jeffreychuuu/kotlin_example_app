@@ -25,9 +25,13 @@ This is a simple guideline on the project creation and scaffolding project based
 - [Adding Spring Data Support](#Adding-Spring-Data-Support)
 - [Adding Redis Support](#Adding-Redis-Support)
 - [Adding gRPC Support](#Adding-gRPC-Support)
-  - [For Grpc Lib](For-Grpc-Lib)
-  - [For Grpc Server](For-Grpc-Server)
-  - [For Grpc Client](For Grpc Client)
+  - [Using gRpc Common Lib](#Using-gRpc-Common-Lib)
+    - [For gRpc Lib](#For-gRpc-Lib)
+    - [For gRpc Server](#For-gRpc-Server)
+    - [For gRpc Client](#For-gRpc-Client)
+  - [Without Using Grpc Common Lib](#Without-Using-Grpc-Common-Lib)
+    - [For gRpc Server](#For-gRpc-Server)
+    - [For gRpc Client](#For-gRpc-Client)
 - [Adding MongoDB Support](#Adding-MongoDB-Support)
 - [Adding Retrofit Support](#Adding-Retrofit-Support)
 - [Adding Kafka Support](#Adding-Kafka-Support)
@@ -1116,7 +1120,9 @@ class ArticleService(private val articleRepository: ArticleRepository) {
 
 ## Adding gRPC Support
 
-### For Grpc Lib
+### Using gRpc Common Lib
+
+#### For gRpc Lib
 
 Add the required plugin and dependencies to `build.gradle.kts` 
 
@@ -1224,7 +1230,7 @@ Generate the `stub` and `message` based on the proto file by
 ./gradlew generateProto
 ```
 
-### For Grpc Server
+#### For Grpc Server
 
 Add the required plugin and dependencies to `build.gradle.kts` 
 
@@ -1267,7 +1273,7 @@ class ArticleGrpcService(private val articleService: ArticleService) : ArticleSe
 }
 ```
 
-### For Grpc Client
+#### For Grpc Client
 
 Add the required plugin and dependencies to `build.gradle.kts` 
 
@@ -1298,6 +1304,147 @@ Define an External Service that connect to other gRPC server
 @Service
 class ExternalService {
     @GrpcClient("articleGrpcServer") // same name as that in application.yml
+    private val articleServiceStub: ArticleServiceGrpcKt.ArticleServiceCoroutineStub? = null
+
+    fun getAllArticlesCount(): Int {
+        var result : ArticleList = ArticleList.newBuilder().build()
+        runBlocking {
+            launch {
+                result = articleServiceStub?.findAllArticles(Empty.newBuilder().build()) ?: ArticleList.newBuilder().build()
+            }
+        }
+        return result.articlesCount
+    }
+}
+```
+
+### Without Using gRPC Common Lib
+Add the required plugin and dependencies to `build.gradle.kts` 
+
+```yaml
+import com.google.protobuf.gradle.*
+
+plugins {
+    id("com.google.protobuf") version "0.8.13"
+}
+
+dependencies {
+    api("io.grpc:grpc-kotlin-stub:0.2.1")
+    implementation("net.devh:grpc-spring-boot-starter:2.12.0.RELEASE")
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.10.0:osx-x86_64" // you need to mention :osx-x86_64 behind if you are using m1 mac
+    }
+
+    plugins {
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.25.0:osx-x86_64" // you need to mention :osx-x86_64 behind if you are using m1 mac
+        }
+        id("grpckt") {
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.1.0:jdk7@jar"
+        }
+    }
+
+    generateProtoTasks {
+        ofSourceSet("main").forEach { generateProtoTask ->
+            generateProtoTask
+                .plugins {
+                    id("grpc")
+                    id("grpckt")
+                }
+        }
+    }
+}
+```
+
+Create a proto in `src/main/proto`
+
+```proto
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+
+package com.example.kotlin_example_app;
+
+service ArticleService {
+  rpc FindAllArticles (google.protobuf.Empty) returns (ArticleList);
+}
+
+message ArticleList {
+  repeated Article articles = 1;
+}
+
+message Article {
+  int64 id = 1;
+  string title = 2;
+  string content = 3;
+  string authorId = 4;
+}
+```
+
+Generate the `stub` and `message` based on the proto file by
+
+```
+./gradlew generateProto
+```
+
+### For Grpc Server
+
+Add grpc config to `application.yml`
+
+```yaml
+grpc:
+  server:
+    port: 9090
+```
+
+Add a GrpcService
+
+```kotlin
+@GrpcService
+class ArticleGrpcService(private val articleService: ArticleService) : ArticleServiceGrpcKt.ArticleServiceCoroutineImplBase() {
+    override suspend fun findAllArticles(request: Empty): ArticleList {
+        var articles: List<ArticleEntity> =  articleService.findAll()
+
+        var articleList : ArrayList<Article> = ArrayList<Article>()
+        for (article: ArticleEntity in articles) {
+            var article : Article = Article.newBuilder()
+                .setId(article.id)
+                .setTitle(article.title)
+                .setContent(article.content)
+                .setAuthorId(article.authorId)
+                .build()
+            articleList.add(article)
+        }
+        return ArticleList.newBuilder().addAllArticles(articleList).build()
+    }
+}
+```
+
+### For Grpc Client
+
+Add grpc config to `application.yml`
+
+```yaml
+grpc:
+  client:
+    articleGrpcServer:
+      address: static://127.0.0.1:9090
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+```
+
+Define an External Service that connect to other gRPC server
+
+```kotlin
+@Service
+class ExternalService {
+    @GrpcClient("articleGrpcServer") // same name as that in aqpplication.yml
     private val articleServiceStub: ArticleServiceGrpcKt.ArticleServiceCoroutineStub? = null
 
     fun getAllArticlesCount(): Int {
