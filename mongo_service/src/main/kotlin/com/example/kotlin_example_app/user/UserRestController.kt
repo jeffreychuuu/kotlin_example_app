@@ -1,13 +1,10 @@
 package com.example.kotlin_example_app.user
 
-import com.example.kotlin_example_app.ArticleList
-import com.example.kotlin_example_app.ExternalService
+import com.example.kotlin_example_app.external.ArticleGrpcService
 import com.example.kotlin_example_app.user.documents.UserDocument
 import com.example.kotlin_example_app.user.dto.CreateUserDto
 import com.example.kotlin_example_app.user.dto.UpdateUserDto
 import io.swagger.v3.oas.annotations.tags.Tag
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -15,7 +12,7 @@ import javax.validation.Valid
 @Tag(name = "UserRestController")
 @RestController
 @RequestMapping("/api")
-class UserRestController(private val userService: UserService, private val externalService: ExternalService) {
+class UserRestController(private val userService: UserService, private val externalService: ArticleGrpcService) {
     @GetMapping("/articles/count")
     fun getALlExternals(): Int =
         externalService.getAllArticlesCount()

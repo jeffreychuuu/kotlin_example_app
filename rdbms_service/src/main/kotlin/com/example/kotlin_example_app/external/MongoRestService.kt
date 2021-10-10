@@ -1,4 +1,4 @@
-package com.example.kotlin_example_app.externalService
+package com.example.kotlin_example_app.external
 
 import com.example.kotlin_example_app.retrofit.MongoServiceRestApi
 import org.springframework.beans.factory.annotation.Autowired
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 import retrofit2.Retrofit
 
 @Service
-class MongoService {
+class MongoRestService {
     @Autowired
     @Qualifier("mongoServiceRetrofit")
     lateinit var mongoServiceRetrofit: Retrofit

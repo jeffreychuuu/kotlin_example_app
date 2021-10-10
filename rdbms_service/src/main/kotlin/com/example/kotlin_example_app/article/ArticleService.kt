@@ -3,11 +3,10 @@ package com.example.kotlin_example_app.article
 import com.example.kotlin_example_app.article.dto.CreateArticleDto
 import com.example.kotlin_example_app.article.dto.UpdateArticleDto
 import com.example.kotlin_example_app.article.entities.ArticleEntity
-import com.example.kotlin_example_app.externalService.MongoService
+import com.example.kotlin_example_app.external.MongoRestService
 import com.example.kotlin_example_app.util.RedisUtil
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -17,7 +16,7 @@ import javax.annotation.Resource
 import javax.validation.Valid
 
 @Service
-class ArticleService(private val articleRepository: ArticleRepository, private val mongoService: MongoService) {
+class ArticleService(private val articleRepository: ArticleRepository, private val mongoService: MongoRestService) {
     val key = "article"
     val mapper = jacksonObjectMapper()
 

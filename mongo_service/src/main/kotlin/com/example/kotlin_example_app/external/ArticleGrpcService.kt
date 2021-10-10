@@ -1,5 +1,7 @@
-package com.example.kotlin_example_app
+package com.example.kotlin_example_app.external
 
+import com.example.kotlin_example_app.ArticleList
+import com.example.kotlin_example_app.ArticleServiceGrpcKt
 import com.google.protobuf.Empty
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -7,7 +9,7 @@ import net.devh.boot.grpc.client.inject.GrpcClient
 import org.springframework.stereotype.Service
 
 @Service
-class ExternalService {
+class ArticleGrpcService {
     @GrpcClient("articleGrpcServer")
     private val articleServiceStub: ArticleServiceGrpcKt.ArticleServiceCoroutineStub? = null
 
