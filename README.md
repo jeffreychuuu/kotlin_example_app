@@ -1155,14 +1155,6 @@ protobuf {
 }
 ```
 
-Add grpc config to `application.yml`
-
-```yaml
-grpc:
-  server:
-    port: 9090
-```
-
 Create a proto in `src/main/proto`
 
 ```proto
@@ -1198,6 +1190,14 @@ Generate the `stub` and `message` based on the proto file by
 
 ### For Grpc Server
 
+Add grpc config to `application.yml`
+
+```yaml
+grpc:
+  server:
+    port: 9090
+```
+
 Add a GrpcService
 
 ```kotlin
@@ -1222,6 +1222,38 @@ class ArticleGrpcService(private val articleService: ArticleService) : ArticleSe
 ```
 
 ### For Grpc Client
+
+Add grpc config to `application.yml`
+
+```yaml
+grpc:
+  client:
+    articleGrpcServer:
+      address: static://127.0.0.1:9090
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+```
+
+Define an External Service that connect to other gRPC server
+
+```kotlin
+@Service
+class ExternalService {
+    @GrpcClient("articleGrpcServer") // same name as that in aqpplication.yml
+    private val articleServiceStub: ArticleServiceGrpcKt.ArticleServiceCoroutineStub? = null
+
+    fun getAllArticlesCount(): Int {
+        var result : ArticleList = ArticleList.newBuilder().build()
+        runBlocking {
+            launch {
+                result = articleServiceStub?.findAllArticles(Empty.newBuilder().build()) ?: ArticleList.newBuilder().build()
+            }
+        }
+        return result.articlesCount
+    }
+}
+```
 
 ## Adding MongoDB Support
 

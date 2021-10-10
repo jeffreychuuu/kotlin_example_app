@@ -1,6 +1,17 @@
 server:
   port: 8081
 
+# gRPC
+grpc:
+  server:
+    port: 9091
+  client:
+    articleGrpcServer:
+      address: static://127.0.0.1:9090
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+
 ## Spring Doc
 springdoc:
   api-docs:

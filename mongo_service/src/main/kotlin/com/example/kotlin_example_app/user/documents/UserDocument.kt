@@ -1,4 +1,4 @@
-package com.example.mongo_service.user.documents
+package com.example.kotlin_example_app.user.documents
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document

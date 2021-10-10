@@ -1,23 +1,18 @@
-package com.example.mongo_service.user
+package com.example.kotlin_example_app.user
 
-import com.example.mongo_service.ArticleList
-import com.example.mongo_service.ExternalService
-import com.example.mongo_service.documents.UserRepository
-import com.example.mongo_service.user.documents.UserDocument
-import com.example.mongo_service.user.dto.CreateUserDto
-import com.example.mongo_service.user.dto.UpdateUserDto
-import com.example.mongo_service.util.RedisUtil
+import com.example.kotlin_example_app.documents.UserRepository
+import com.example.kotlin_example_app.user.documents.UserDocument
+import com.example.kotlin_example_app.user.dto.CreateUserDto
+import com.example.kotlin_example_app.user.dto.UpdateUserDto
+import com.example.kotlin_example_app.util.RedisUtil
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.google.protobuf.Empty
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import javax.annotation.Resource
 import javax.validation.Valid
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 
 @Service
 class UserService(private val userRepository: UserRepository) {

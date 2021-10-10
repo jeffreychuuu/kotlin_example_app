@@ -1,8 +1,8 @@
-package com.example.mongo_service.user
+package com.example.kotlin_example_app.user
 
-import com.example.mongo_service.user.documents.UserDocument
-import com.example.mongo_service.user.dto.CreateUserDto
-import com.example.mongo_service.user.dto.UpdateUserDto
+import com.example.kotlin_example_app.user.documents.UserDocument
+import com.example.kotlin_example_app.user.dto.CreateUserDto
+import com.example.kotlin_example_app.user.dto.UpdateUserDto
 import com.example.netflix_dgs.generated.types.Article
 import com.netflix.graphql.dgs.*
 

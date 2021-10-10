@@ -1,11 +1,13 @@
-package com.example.mongo_service.user
+package com.example.kotlin_example_app.user
 
-import com.example.mongo_service.ArticleList
-import com.example.mongo_service.ExternalService
-import com.example.mongo_service.user.documents.UserDocument
-import com.example.mongo_service.user.dto.CreateUserDto
-import com.example.mongo_service.user.dto.UpdateUserDto
+import com.example.kotlin_example_app.ArticleList
+import com.example.kotlin_example_app.ExternalService
+import com.example.kotlin_example_app.user.documents.UserDocument
+import com.example.kotlin_example_app.user.dto.CreateUserDto
+import com.example.kotlin_example_app.user.dto.UpdateUserDto
 import io.swagger.v3.oas.annotations.tags.Tag
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -14,14 +16,13 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api")
 class UserRestController(private val userService: UserService, private val externalService: ExternalService) {
-    @GetMapping("/externals")
-    suspend fun getALlExternals(): ArticleList =
-        externalService.getAllArticles()
+    @GetMapping("/articles/count")
+    fun getALlExternals(): Int =
+        externalService.getAllArticlesCount()
 
     @GetMapping("/users")
     fun getAllArticles(): List<UserDocument> =
         userService.findAll()
-
 
     @PostMapping("/users")
     fun createNewArticle(@Valid @RequestBody createUserDto: CreateUserDto): UserDocument =

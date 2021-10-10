@@ -1,4 +1,4 @@
-package com.example.mongo_service.util
+package com.example.kotlin_example_app.util
 
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component

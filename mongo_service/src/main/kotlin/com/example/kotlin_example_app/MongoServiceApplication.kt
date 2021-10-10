@@ -1,8 +1,7 @@
-package com.example.mongo_service
+package com.example.kotlin_example_app
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
 
 @SpringBootApplication
 class MongoServiceApplication

@@ -1,4 +1,4 @@
-package com.example.mongo_service.kafka
+package com.example.kotlin_example_app.kafka
 
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener

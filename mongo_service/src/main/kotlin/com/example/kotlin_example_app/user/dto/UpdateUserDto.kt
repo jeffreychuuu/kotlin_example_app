@@ -1,4 +1,4 @@
-package com.example.mongo_service.user.dto
+package com.example.kotlin_example_app.user.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
