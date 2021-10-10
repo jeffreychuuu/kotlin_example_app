@@ -1241,7 +1241,11 @@ dependencies {
     implementation("net.devh:grpc-spring-boot-starter:2.12.0.RELEASE")
 }
 ```
-
+Add the related project in `setting.gradle.kts`
+```
+include(":grpc_lib")
+project(":grpc_lib").projectDir = file("../grpc_lib")
+```
 Add grpc config to `application.yml`
 
 ```yaml
@@ -1284,6 +1288,12 @@ dependencies {
     implementation("net.devh:grpc-spring-boot-starter:2.12.0.RELEASE")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 }
+```
+
+Add the related project in `setting.gradle.kts`
+```
+include(":grpc_lib")
+project(":grpc_lib").projectDir = file("../grpc_lib")
 ```
 
 Add grpc config to `application.yml`
