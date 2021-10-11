@@ -4,3 +4,4 @@
 /grpc_lib/lib
 /.history
 /grpc_lib/src/main/kotlin/generated
+/apollo-gateway/.history
