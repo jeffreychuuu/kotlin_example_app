@@ -45,7 +45,7 @@ jobs:
       resource_class: medium
       image: ubuntu-2004:202010-01
 
-    working_directory: ~/build
+    working_directory: ~/build/<< parameters.app_name >>
 
     parameters:
       app_name:
@@ -58,10 +58,6 @@ jobs:
     steps:
       - checkout:
           path: ~/build
-      - run:
-          name: Enter to << parameters.app_name >> folder
-          command: |
-            cd << parameters.app_name >>
       - run:
           name: View current folder
           command: |
