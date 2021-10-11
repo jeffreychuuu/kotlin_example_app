@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 @SpringBootApplication
 class MongoServiceApplication
 
-// test
+// tes
 fun main(args: Array<String>) {
     SpringApplication.run(MongoServiceApplication::class.java, *args)
 }
