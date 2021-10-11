@@ -57,7 +57,7 @@ jobs:
 
     steps:
       - checkout:
-          path: ~/build
+          path: ~
       - run:
           name: View current folder
           command: |
