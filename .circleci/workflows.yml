@@ -59,6 +59,10 @@ jobs:
       - checkout:
           path: ~
       - run:
+          name: View current folder
+          command: |
+            ls
+      - run:
           name: Setup common environment variables
           command: |
             echo 'export APP_NAME="<< parameters.app_name >>"' >> $BASH_ENV
