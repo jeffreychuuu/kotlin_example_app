@@ -8,6 +8,12 @@ option java_multiple_files = true;
 
 service ArticleService {
   rpc FindAllArticles (google.protobuf.Empty) returns (ArticleList);
+  rpc FindOneArticle (ArticleId) returns (Article);
+}
+
+// input
+message ArticleId{
+  int64 id = 1;
 }
 
 message ArticleList {

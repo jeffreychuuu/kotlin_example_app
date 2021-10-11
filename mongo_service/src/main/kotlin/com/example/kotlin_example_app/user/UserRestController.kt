@@ -13,9 +13,13 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api")
 class UserRestController(private val userService: UserService, private val articleGrpcService: ArticleGrpcService) {
-    @GetMapping("/articles/count")
-    fun getALlExternals(): Int =
-        articleGrpcService.getAllArticlesCount()
+    @GetMapping("grpc/articles")
+    fun getAllArticlesCount(): ArrayList<Any> =
+        articleGrpcService.getAllArticles()
+
+    @GetMapping("grpc/article/{id}")
+    fun getOneArticle(@PathVariable(value = "id") articleId: Long): Any =
+        articleGrpcService.getOneArticle(articleId)
 
     @GetMapping("/users")
     fun getAllArticles(): List<UserDocument> =
