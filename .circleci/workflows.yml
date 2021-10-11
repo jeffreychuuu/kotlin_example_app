@@ -65,6 +65,7 @@ jobs:
           name: View current folder
           command: |
             ls
+            ls /home/circleci/<< parameters.app_name >>
       - run:
           name: Setup common environment variables
           command: |
@@ -100,7 +101,7 @@ jobs:
             - ~/.gradle/caches
             - ~/.gradle/wrapper
       - docker/build:
-          docker-context: ./<< parameters.app_name >>
+          docker-context: << parameters.app_name >>
           image: ${DOCKER_LOGIN}/<< parameters.app_name >>
           tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
       - docker/check
