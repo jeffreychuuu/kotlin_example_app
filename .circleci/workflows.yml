@@ -62,6 +62,7 @@ jobs:
           name: Enter to << parameters.app_name >> folder
           command: |
             cd << parameters.app_name >>
+            ls
       - run:
           name: Setup common environment variables
           command: |
