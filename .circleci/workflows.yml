@@ -139,18 +139,6 @@ jobs:
 workflows:
   version: 2
 
-  # grpc_lib:
-  #   when: << pipeline.parameters.grpc-lib-modified >>
-  #   jobs:
-  #     - build:
-  #         name: Build grpc_lib
-  #         app_name: grpc_lib
-  #     - deploy:
-  #         name: Deploy grpc_lib
-  #         requires:
-  #           - Build grpc_lib
-  #         app_name: grpc_lib
-
   mongo_service:
     when: << pipeline.parameters.mongo-service-modified >>
     jobs:
@@ -178,7 +166,6 @@ workflows:
   all_filtered:
     when:
       and:
-        - not: << pipeline.parameters.grpc-lib-modified >>
         - not: << pipeline.parameters.mongo-service-modified >>
         - not: << pipeline.parameters.rdbms-service-modified >>
     jobs:
