@@ -100,10 +100,10 @@ jobs:
           paths:
             - ~/.gradle/caches
             - ~/.gradle/wrapper
-      - docker/build:
-          docker-context: << parameters.app_name >>
-          image: ${DOCKER_LOGIN}/<< parameters.app_name >>
-          tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
+      - run:
+          name: Docker Build
+          command: |
+            docker build -t ${DOCKER_LOGIN}/<< parameters.app_name >>:$CIRCLE_SHA1 -t ${DOCKER_LOGIN}/<< parameters.app_name >>:<< pipeline.parameters.version_tag >> ./<< parameters.app_name >>
       - docker/check
       - docker/push:
           image: ${DOCKER_LOGIN}/<< parameters.app_name >>
