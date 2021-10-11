@@ -12,10 +12,10 @@ import javax.validation.Valid
 @Tag(name = "UserRestController")
 @RestController
 @RequestMapping("/api")
-class UserRestController(private val userService: UserService, private val externalService: ArticleGrpcService) {
+class UserRestController(private val userService: UserService, private val articleGrpcService: ArticleGrpcService) {
     @GetMapping("/articles/count")
     fun getALlExternals(): Int =
-        externalService.getAllArticlesCount()
+        articleGrpcService.getAllArticlesCount()
 
     @GetMapping("/users")
     fun getAllArticles(): List<UserDocument> =

@@ -1,8 +1,7 @@
 package com.example.kotlin_example_app.article
 
-import com.common.grpc_lib.ArticleServiceGrpcKt
-import com.common.grpc_lib.ArticleList
-import com.common.grpc_lib.Article
+import Article
+import ArticleList
 import com.example.kotlin_example_app.article.entities.ArticleEntity
 import com.google.protobuf.Empty
 import net.devh.boot.grpc.server.service.GrpcService

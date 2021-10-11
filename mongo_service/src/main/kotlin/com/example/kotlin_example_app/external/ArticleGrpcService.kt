@@ -1,7 +1,6 @@
 package com.example.kotlin_example_app.external
 
-import com.common.grpc_lib.ArticleServiceGrpcKt
-import com.common.grpc_lib.ArticleList
+import ArticleList
 import com.google.protobuf.Empty
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -14,10 +13,11 @@ class ArticleGrpcService {
     private val articleServiceStub: ArticleServiceGrpcKt.ArticleServiceCoroutineStub? = null
 
     fun getAllArticlesCount(): Int {
-        var result : ArticleList = ArticleList.newBuilder().build()
+        var result: ArticleList = ArticleList.newBuilder().build()
         runBlocking {
             launch {
-                result = articleServiceStub?.findAllArticles(Empty.newBuilder().build()) ?: ArticleList.newBuilder().build()
+                result =
+                    articleServiceStub?.findAllArticles(Empty.newBuilder().build()) ?: ArticleList.newBuilder().build()
             }
         }
         return result.articlesCount

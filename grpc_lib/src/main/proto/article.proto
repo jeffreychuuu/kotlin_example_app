@@ -4,7 +4,7 @@ import "google/protobuf/empty.proto";
 
 option java_multiple_files = true;
 
-package com.common.grpc_lib;
+//package com.common.grpc_lib;
 
 service ArticleService {
   rpc FindAllArticles (google.protobuf.Empty) returns (ArticleList);
