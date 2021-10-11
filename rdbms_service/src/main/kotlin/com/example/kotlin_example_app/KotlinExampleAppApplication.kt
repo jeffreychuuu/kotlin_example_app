@@ -13,7 +13,7 @@ fun listen(input: String?) {
     println("input value: $input")
 }
 
-// tes
+// test
 fun main(args: Array<String>) {
     SpringApplication.run(KotlinExampleAppApplication::class.java, *args)
 }

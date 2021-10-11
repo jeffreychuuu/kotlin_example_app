@@ -27,8 +27,6 @@ commands:
 
   envsubst-action:
     parameters:
-      folder_name:
-        type: string
       input_file:
         type: string
       output_file:
@@ -37,7 +35,6 @@ commands:
       - run:
           name: Environment Variable Subsitution
           command: |
-            cd << parameters.folder_name >>
             envsubst < "<< parameters.input_file >>" > tmp
             mv tmp "<< parameters.output_file >>"
             cat "<< parameters.output_file >>"
@@ -48,8 +45,7 @@ jobs:
       resource_class: medium
       image: ubuntu-2004:202010-01
 
-    # working_directory: ~/build/<< parameters.app_name >>
-    working_directory: ~/<< parameters.app_name >>
+    working_directory: ~/build/<< parameters.app_name >>
 
     parameters:
       app_name:
@@ -60,7 +56,8 @@ jobs:
         type: string
 
     steps:
-      - checkout
+      - checkout:
+          path: ~
       - run:
           name: View current folder
           command: |
@@ -77,30 +74,26 @@ jobs:
               echo 'export RDBMS_HOST="rdbms_host:xxx.xxx.xxx.xxx"' >> $BASH_ENV
             fi
       - envsubst-action:
-          folder_name: << parameters.app_name >>
           input_file: << parameters.test_file_input >>
           output_file: << parameters.test_file_output >>
       - run:
           name: Hash dependency info
           command: |
-            cd << parameters.app_name >>
             mkdir -p build
             md5sum gradle/wrapper/gradle-wrapper.properties settings.gradle.kts build.gradle.kts > build/deps.md5
       - restore_cache:
-          key: gradle-{{ checksum "<< parameters.app_name >>/build/deps.md5" }}
+          key: gradle-{{ checksum "build/deps.md5" }}
       - run:
           name: Gradlew Build
           command: |
-            cd << parameters.app_name >>
             chmod +x gradlew
             ./gradlew build -x test
       - save_cache:
-          key: gradle-{{ checksum "<< parameters.app_name >>/build/deps.md5" }}
+          key: gradle-{{ checksum "build/deps.md5" }}
           paths:
             - ~/.gradle/caches
             - ~/.gradle/wrapper
       - docker/build:
-          docker-context: ./<< parameters.app_name >>
           image: ${DOCKER_LOGIN}/<< parameters.app_name >>
           tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
       - docker/check
