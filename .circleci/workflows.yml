@@ -29,6 +29,7 @@ commands:
     parameters:
       folder_name:
         type: string
+        default: ./
       input_file:
         type: string
       output_file:
@@ -61,11 +62,6 @@ jobs:
 
     steps:
       - checkout
-      - run:
-          name: View current folder
-          command: |
-            ls
-            ls /home/circleci/<< parameters.app_name >>
       - run:
           name: Setup common environment variables
           command: |
@@ -100,11 +96,11 @@ jobs:
           paths:
             - ~/.gradle/caches
             - ~/.gradle/wrapper
+      - docker/check
       - run:
           name: Docker Build
           command: |
             docker build -t ${DOCKER_LOGIN}/<< parameters.app_name >>:$CIRCLE_SHA1 -t ${DOCKER_LOGIN}/<< parameters.app_name >>:<< pipeline.parameters.version_tag >> ./<< parameters.app_name >>
-      - docker/check
       - docker/push:
           image: ${DOCKER_LOGIN}/<< parameters.app_name >>
           tag: $CIRCLE_SHA1,<< pipeline.parameters.version_tag >>
