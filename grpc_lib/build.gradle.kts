@@ -46,12 +46,12 @@ tasks.withType<KotlinCompile> {
 
 protobuf {
 	protoc{
-		artifact = "com.google.protobuf:protoc:3.14.0:osx-x86_64" // you need to mention :osx-x86_64 behind if you are using m1 mac
+		artifact = "com.google.protobuf:protoc:3.14.0" // you need to mention :osx-x86_64 behind if you are using m1 mac
 	}
 	generatedFilesBaseDir = "$projectDir/src/main/kotlin/generated"
 	plugins {
 		id("grpc"){
-			artifact = "io.grpc:protoc-gen-grpc-java:1.36.0:osx-x86_64" // you need to mention :osx-x86_64 behind if you are using m1 mac
+			artifact = "io.grpc:protoc-gen-grpc-java:1.36.0" // you need to mention :osx-x86_64 behind if you are using m1 mac
 		}
 		id("grpckt") {
 			artifact = "io.grpc:protoc-gen-grpc-kotlin:1.1.0:jdk7@jar"
